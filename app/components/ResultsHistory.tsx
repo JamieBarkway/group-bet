@@ -370,13 +370,13 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                   player.username === selectedPlayer ? "border-l-4 border-l-yellow-400" : ""
                 }`}
               >
-                <td className={`px-6 py-4 text-sm font-medium text-white sticky left-0 z-20 bg-slate-800`}>
+                <td className={`px-2 py-2 md:px-6 md:py-4 text-xs md:text-sm font-medium text-white sticky left-0 z-20 bg-slate-800`}>
                   {player.username}
                 </td>
                 {Array.from({ length: totalWeeks }, (_, i) => (
                   <td 
                     key={i} 
-                    className={`px-3 py-4 text-center text-sm ${
+                    className={`px-1 py-2 md:px-3 md:py-4 text-center text-xs md:text-sm ${
                       i < maxResults && allWinRounds.has(i) ? "bg-yellow-600 bg-opacity-20" : ""
                     }`}
                   >
@@ -397,7 +397,7 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                               });
                             }
                           }}
-                          className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm ${
+                          className={`inline-flex items-center justify-center w-7 h-7 md:w-10 md:h-10 rounded-full font-bold text-xs md:text-sm ${
                             player.results[i].outcome === "W"
                               ? "bg-green-600 text-white"
                               : player.results[i].outcome === "L"
@@ -412,9 +412,10 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                           {player.results[i].outcome}
                         </span>
                         {player.results[i].emoji && (() => {
-                          const emojiChars = Array.from(player.results[i].emoji || "");
+                          const emoji = player.results[i].emoji || "";
+                          const chars = emoji.split(/(?=[\p{Emoji_Presentation}])/u).filter(c => /[\p{Emoji}]/u.test(c));
                           const positions = ["-top-2 -left-2", "-top-2 -right-2", "-bottom-2 -left-2", "-bottom-2 -right-2"];
-                          return emojiChars.slice(0, 4).map((ch, idx) => (
+                          return chars.slice(0, 4).map((ch, idx) => (
                             <span
                               key={idx}
                               className={`absolute ${positions[idx]} text-lg leading-none pointer-events-none`}

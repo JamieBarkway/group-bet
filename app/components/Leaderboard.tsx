@@ -52,11 +52,12 @@ export default function Leaderboard({ selectedPlayer }: { selectedPlayer?: strin
         <span className="text-yellow-400">🏆</span> Leaderboard
       </h2>
       <div className="bg-slate-800 rounded-lg shadow-lg overflow-hidden border border-slate-700">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[800px]">
           <thead>
             <tr className="bg-gradient-to-r from-slate-700 to-slate-600 border-b border-slate-600">
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">Rank</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">Player</th>
+              <th className="sticky left-0 z-20 px-2 py-4 text-left text-sm font-semibold text-slate-200 bg-slate-700">Rank</th>
+              <th className="sticky left-[48px] z-10 px-6 py-4 text-left text-sm font-semibold text-slate-200 bg-slate-700">Player</th>
               <th className="px-6 py-4 text-center text-sm font-semibold text-slate-200">Wins</th>
               <th className="px-6 py-4 text-center text-sm font-semibold text-slate-200">Losses</th>
               <th className="px-6 py-4 text-center text-sm font-semibold text-slate-200">Win Rate</th>
@@ -77,14 +78,14 @@ export default function Leaderboard({ selectedPlayer }: { selectedPlayer?: strin
                     u.user === selectedPlayer ? "border-l-4 border-l-yellow-400" : ""
                   }`}
                 >
-                  <td className="px-6 py-4 text-sm font-bold text-yellow-400">
+                  <td className="sticky left-0 z-20 px-2 py-4 text-sm font-bold text-yellow-400 bg-slate-800">
                     {index === 0 && "🥇"}
                     {index === 1 && "🥈"}
                     {index === 2 && "🥉"}
                     {index === 5 && "💩"}
                     {index > 2 && index !== 5 && `${index + 1}.`}
                   </td>
-                  <td className="px-6 py-4 text-sm font-medium text-white">{u.user}</td>
+                  <td className="sticky left-[48px] z-10 px-6 py-4 text-sm font-medium text-white bg-slate-800">{u.user}</td>
                   <td className="px-6 py-4 text-sm text-center text-green-400 font-semibold">{u.wins}</td>
                   <td className="px-6 py-4 text-sm text-center text-red-400 font-semibold">{u.losses}</td>
                   <td className="px-6 py-4 text-sm text-center font-bold">
@@ -112,6 +113,7 @@ export default function Leaderboard({ selectedPlayer }: { selectedPlayer?: strin
               ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
