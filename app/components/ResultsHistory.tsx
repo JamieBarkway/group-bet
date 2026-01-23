@@ -232,6 +232,24 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
     }))
     .filter(p => p.prediction);
 
+    const mostPickedTeams = players.flatMap(player => 
+        player.results
+            .filter(r => r.prediction && r.prediction.match != null && (r.prediction.type === "Home" || r.prediction.type === "Away"))
+            .map(result => ({
+                team: result.prediction!.type === "Home" ? result.prediction!.match.homeName : result.prediction!.match.awayName
+            }))
+    );
+    const teamCounts = mostPickedTeams.reduce((acc, { team }) => {
+        acc[team] = (acc[team] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const topThreeTeams = Object.entries(teamCounts)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 3)
+        .map(([team]) => team);
+
+
   // Fine ledger: £5 for each of these emojis
   const finePattern = /(😴|🤢|🤣|🤦‍♂️|😡)/g;
   const fineRows = players.map((player) => {
@@ -445,6 +463,48 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
           </tbody>
         </table>
       </div>
+
+      {/* Most Picked Teams */}
+      {topThreeTeams.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+            <span className="text-blue-400">⭐</span> Most Picked Teams
+          </h3>
+          <div className="bg-slate-800 rounded-lg shadow-lg overflow-hidden border border-slate-700">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gradient-to-r from-slate-700 to-slate-600 border-b border-slate-600">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">Rank</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">Team</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-slate-200">Picks</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topThreeTeams.map((team, index) => (
+                  <tr
+                    key={team}
+                    className={`border-b border-slate-700 last:border-0 ${
+                      index % 2 === 0 ? "bg-slate-800" : "bg-slate-750"
+                    } hover:bg-slate-700 transition-colors`}
+                  >
+                    <td className="px-6 py-4 text-sm font-bold text-yellow-400">
+                      {index === 0 && "🥇"}
+                      {index === 1 && "🥈"}
+                      {index === 2 && "🥉"}
+                    </td>
+                    <td className="px-6 py-4 text-sm font-medium text-white">{team}</td>
+                    <td className="px-6 py-4 text-center">
+                      <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                        {teamCounts[team]}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Modal for showing all selections */}
       {showModal && (

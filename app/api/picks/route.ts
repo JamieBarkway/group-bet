@@ -16,11 +16,24 @@ export async function GET() {
   return NextResponse.json(leaderboard);
 }
 
-function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" | "P"; emoji: string | null }> }) {
+function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" | "P"; emoji: string | null, prediction: {
+          type: string,
+          match: {
+            homeName: string,
+            awayName: string,
+            startDateTimeUtc: string,
+            eventId: string
+          }
+        } }> }) {
   const total = user.results.filter(r => r.outcome !== "P").length; // Exclude pending predictions
   const wins = user.results.filter(r => r.outcome === "W").length;
   const losses = total - wins;
   const winPct = total ? ((wins / total) * 100).toFixed(1) : "0.0";
+  const totalWithResults = user.results.filter(r => r.prediction != null).length;
+  const bttsPct = total ? ((user.results.filter(r => r.prediction?.type === "BTTS").length / totalWithResults) * 100).toFixed(1) : "0.0";
+  const homeWinPct = total ? ((user.results.filter(r => r.prediction?.type === "Home").length / totalWithResults) * 100).toFixed(1) : "0.0";
+  const awayWinPct = total ? ((user.results.filter(r => r.prediction?.type === "Away").length / totalWithResults) * 100).toFixed(1) : "0.0";
+  const o2GoalsPct = total ? ((user.results.filter(r => r.prediction?.type === "O2.5").length / totalWithResults) * 100).toFixed(1) : "0.0";
 
   // Fine calculation: £5 per penalty emoji
   const finePattern = /(😴|🤢|🤣|🤦‍♂️|😡)/g;
@@ -62,7 +75,11 @@ function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" 
     fineCount,
     fineTotal,
     longestWinStreak,
-    longestLossStreak
+    longestLossStreak,
+    bttsPct,
+    homeWinPct,
+    awayWinPct,
+    o2GoalsPct
   };
 }
 
