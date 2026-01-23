@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 
-const API_KEY = "yRSVmceJZCKAyreWme8hD3JKrIbpsOCSVI4JLEIj";
+const API_KEY = "4P3oJiMP9rMuA3nYKRizNv2iQJLwkEcBpXXn43jz";
+
+// In-memory cache
+let cachedFixtures: any[] | null = null;
+let cacheTimestamp: number | null = null;
+const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 const LEAGUES = [
   {
@@ -43,6 +48,15 @@ async function fetchLeagueFixtures(leagueName: string, leagueEndpoint: string) {
 
 export async function GET() {
   try {
+    // Check if cache is valid (less than 24 hours old)
+    const now = Date.now();
+    if (cachedFixtures && cacheTimestamp && (now - cacheTimestamp) < CACHE_DURATION_MS) {
+      console.log("Returning cached fixtures data");
+      return NextResponse.json(cachedFixtures);
+    }
+
+    console.log("Fetching fresh fixtures data from API");
+
     // Fetch all leagues in parallel
     const leaguePromises = LEAGUES.map(league =>
       fetchLeagueFixtures(league.name, league.endpoint)
@@ -72,12 +86,17 @@ export async function GET() {
       }));
     });
 
+    // Update cache
+    cachedFixtures = allFixtures;
+    cacheTimestamp = now;
+
     // If no fixtures found, include league status for debugging
     if (allFixtures.length === 0) {
-      return NextResponse.json({
+      const response = {
         fixtures: allFixtures,
         leagueStatus: results,
-      });
+      };
+      return NextResponse.json(response);
     }
 
     return NextResponse.json(allFixtures);

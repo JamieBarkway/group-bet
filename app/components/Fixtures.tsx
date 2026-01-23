@@ -113,7 +113,9 @@ export default function WeekendFixtures({ selectedPlayer }: { selectedPlayer?: s
 
         if (!res.ok) throw new Error("Failed to load fixtures");
 
-        const data: any[] = await res.json();
+        const response = await res.json();
+        // Handle both array response and object response with fixtures property
+        const data: any[] = Array.isArray(response) ? response : (response.fixtures || []);
         const { saturday, sunday } = getUpcomingWeekend();
 
         const weekend = data.filter((f) => {

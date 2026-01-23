@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-const API_KEY = "yRSVmceJZCKAyreWme8hD3JKrIbpsOCSVI4JLEIj";
+const API_KEY = "4P3oJiMP9rMuA3nYKRizNv2iQJLwkEcBpXXn43jz";
 
 const LEAGUES = [
   {
