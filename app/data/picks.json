@@ -105,6 +105,19 @@
       {
         "outcome": "L",
         "emoji": null
+      },
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Salford",
+            "awayName": "Bristol Rovers",
+            "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
+            "eventId": "xANanexn"
+          }
+        }
       }
     ]
   },
@@ -323,6 +336,19 @@
       {
         "outcome": "W",
         "emoji": null
+      },
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "O2.5",
+          "match": {
+            "homeName": "Newport",
+            "awayName": "Chesterfield",
+            "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
+            "eventId": "KOuEhi0B"
+          }
+        }
       }
     ]
   },
@@ -432,6 +458,19 @@
       {
         "outcome": "L",
         "emoji": "😡"
+      },
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Hull",
+            "awayName": "Swansea",
+            "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
+            "eventId": "CUbxH15k"
+          }
+        }
       }
     ]
   },
@@ -541,6 +580,19 @@
       {
         "outcome": "L",
         "emoji": "😡"
+      },
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Cambridge Utd",
+            "awayName": "Tranmere",
+            "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
+            "eventId": "zq68rhKD"
+          }
+        }
       }
     ]
   },
@@ -650,6 +702,19 @@
       {
         "outcome": "W",
         "emoji": null
+      },
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Birmingham",
+            "awayName": "Stoke",
+            "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
+            "eventId": "MROGxu5D"
+          }
+        }
       }
     ]
   }
