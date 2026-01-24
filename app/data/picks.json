@@ -227,6 +227,19 @@
       {
         "outcome": "W",
         "emoji": "🔥🔥"
+      },
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Bolton",
+            "awayName": "Leyton Orient",
+            "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
+            "eventId": "ChXaTwa3"
+          }
+        }
       }
     ]
   },
@@ -341,12 +354,12 @@
         "outcome": "P",
         "emoji": null,
         "prediction": {
-          "type": "O2.5",
+          "type": "BTTS",
           "match": {
-            "homeName": "Newport",
-            "awayName": "Chesterfield",
+            "homeName": "Leicester",
+            "awayName": "Oxford Utd",
             "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
-            "eventId": "KOuEhi0B"
+            "eventId": "Mu4kivK6"
           }
         }
       }
