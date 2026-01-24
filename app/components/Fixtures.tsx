@@ -27,7 +27,7 @@ export default function WeekendFixtures({ selectedPlayer }: { selectedPlayer?: s
   const [openLeagues, setOpenLeagues] = useState<{ [key: string]: boolean }>({});
   const [submitting, setSubmitting] = useState(false);
   const [hasPendingPrediction, setHasPendingPrediction] = useState(false);
-  const [takenBy, setTakenBy] = useState<Record<string, string>>({}); // eventId -> username
+  const [takenBy, setTakenBy] = useState<Record<string, { username: string; type: PredictionType }>>({}); // eventId -> {username, type}
 
   useEffect(() => {
     const loadPickState = async () => {
@@ -35,12 +35,15 @@ export default function WeekendFixtures({ selectedPlayer }: { selectedPlayer?: s
         const res = await fetch("/api/picks/raw");
         const data = await res.json();
 
-        // map of eventId -> username for pending picks
-        const taken: Record<string, string> = {};
+        // map of eventId -> {username, type} for pending picks
+        const taken: Record<string, { username: string; type: PredictionType }> = {};
         data.forEach((p: any) => {
           const pending = p.results.find((r: any) => r.outcome === "P" && r.prediction?.match?.eventId);
           if (pending && pending.prediction.match.eventId) {
-            taken[pending.prediction.match.eventId] = p.username;
+            taken[pending.prediction.match.eventId] = {
+              username: p.username,
+              type: pending.prediction.type
+            };
           }
         });
         setTakenBy(taken);
@@ -225,11 +228,6 @@ export default function WeekendFixtures({ selectedPlayer }: { selectedPlayer?: s
                                 minute: "2-digit",
                               })}
                             </div>
-                            {takenBy[f.eventId] && (
-                              <span className="text-[11px] px-2 py-0.5 rounded-full bg-purple-700 text-white font-semibold border border-purple-400/60">
-                                Picked by {takenBy[f.eventId]}
-                              </span>
-                            )}
                           </div>
                           <div className="flex items-center justify-between text-center mb-2">
                             <div className="flex-1">
@@ -241,34 +239,58 @@ export default function WeekendFixtures({ selectedPlayer }: { selectedPlayer?: s
                             </div>
                           </div>
                           <div className="grid grid-cols-4 gap-1">
-                            <button 
-                              onClick={() => handlePrediction(f, "Home")}
-                              disabled={submitting}
-                              className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              Home
-                            </button>
-                            <button 
-                              onClick={() => handlePrediction(f, "Away")}
-                              disabled={submitting}
-                              className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              Away
-                            </button>
-                            <button 
-                              onClick={() => handlePrediction(f, "BTTS")}
-                              disabled={submitting}
-                              className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              BTTS
-                            </button>
-                            <button 
-                              onClick={() => handlePrediction(f, "O2.5")}
-                              disabled={submitting}
-                              className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              O2.5
-                            </button>
+                            {takenBy[f.eventId]?.type === "Home" ? (
+                              <div className="px-2 py-1 bg-purple-600 text-white rounded font-semibold text-xs border border-purple-400 cursor-not-allowed">
+                                Picked by {takenBy[f.eventId].username}
+                              </div>
+                            ) : (
+                              <button 
+                                onClick={() => handlePrediction(f, "Home")}
+                                disabled={submitting}
+                                className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                Home
+                              </button>
+                            )}
+                            {takenBy[f.eventId]?.type === "Away" ? (
+                              <div className="px-2 py-1 bg-purple-600 text-white rounded font-semibold text-xs border border-purple-400 cursor-not-allowed">
+                                Picked by {takenBy[f.eventId].username}
+                              </div>
+                            ) : (
+                              <button 
+                                onClick={() => handlePrediction(f, "Away")}
+                                disabled={submitting}
+                                className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                Away
+                              </button>
+                            )}
+                            {takenBy[f.eventId]?.type === "BTTS" ? (
+                              <div className="px-2 py-1 bg-purple-600 text-white rounded font-semibold text-xs border border-purple-400 cursor-not-allowed">
+                                Picked by {takenBy[f.eventId].username}
+                              </div>
+                            ) : (
+                              <button 
+                                onClick={() => handlePrediction(f, "BTTS")}
+                                disabled={submitting}
+                                className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                BTTS
+                              </button>
+                            )}
+                            {takenBy[f.eventId]?.type === "O2.5" ? (
+                              <div className="px-2 py-1 bg-purple-600 text-white rounded font-semibold text-xs border border-purple-400 cursor-not-allowed">
+                                Picked by {takenBy[f.eventId].username}
+                              </div>
+                            ) : (
+                              <button 
+                                onClick={() => handlePrediction(f, "O2.5")}
+                                disabled={submitting}
+                                className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                O2.5
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))}

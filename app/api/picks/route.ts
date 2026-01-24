@@ -66,12 +66,18 @@ function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" 
     }
   }
 
+  // Get last 5 results (excluding pending)
+  const settledResults = user.results.filter(r => r.outcome !== "P");
+  const last5 = settledResults.slice(-5).map(r => r.outcome).join("");
+  const form = last5 || "-";
+
   return { 
     user: user.username, 
     total, 
     wins, 
     losses, 
     winPct,
+    form,
     fineCount,
     fineTotal,
     longestWinStreak,

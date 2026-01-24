@@ -7,6 +7,7 @@ type LeaderBoardData = {
   wins: number; 
   losses: number; 
   winPct: string;
+  form: string;
   fineTotal: number;
   fineCount: number;
   longestWinStreak: number;
@@ -17,7 +18,7 @@ type LeaderBoardData = {
   o2GoalsPct: string;
 };
 
-type SortColumn = 'player' | 'wins' | 'losses' | 'winPct' | 'bestStreak' | 'worstStreak' | 'fines' | 'homeWinPct' | 'awayWinPct' | 'bttsPct' | 'o2GoalsPct';
+type SortColumn = 'player' | 'wins' | 'losses' | 'winPct' | 'form' | 'bestStreak' | 'worstStreak' | 'fines' | 'homeWinPct' | 'awayWinPct' | 'bttsPct' | 'o2GoalsPct';
 type SortDirection = 'asc' | 'desc';
 
 export default function Leaderboard({ selectedPlayer }: { selectedPlayer?: string }) {
@@ -69,6 +70,11 @@ export default function Leaderboard({ selectedPlayer }: { selectedPlayer?: strin
         case 'winPct':
           aValue = parseFloat(a.winPct);
           bValue = parseFloat(b.winPct);
+          break;
+        case 'form':
+          // Count wins in last 5 results
+          aValue = (a.form || '').split('').filter(r => r === 'W').length;
+          bValue = (b.form || '').split('').filter(r => r === 'W').length;
           break;
         case 'bestStreak':
           aValue = a.longestWinStreak;
@@ -171,6 +177,14 @@ export default function Leaderboard({ selectedPlayer }: { selectedPlayer?: strin
                 </div>
               </th>
               <th 
+                onClick={() => handleSort('form')}
+                className="px-2 md:px-6 py-2 md:py-4 text-center text-xs md:text-sm font-semibold text-slate-200 cursor-pointer hover:bg-slate-600 transition-colors select-none"
+              >
+                <div className="flex items-center justify-center gap-1">
+                  Form <SortIcon column="form" />
+                </div>
+              </th>
+              <th 
                 onClick={() => handleSort('wins')}
                 className="px-2 md:px-6 py-2 md:py-4 text-center text-xs md:text-sm font-semibold text-slate-200 cursor-pointer hover:bg-slate-600 transition-colors select-none"
               >
@@ -267,6 +281,22 @@ export default function Leaderboard({ selectedPlayer }: { selectedPlayer?: strin
                     <span className={`${getWinRateColor(u.winPct)} text-white px-3 py-1 rounded-full text-xs`}>
                       {u.winPct}%
                     </span>
+                  </td>
+                  <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-center">
+                    <div className="flex items-center justify-center gap-0.5">
+                      {(u.form || '-').split('').map((result, idx) => (
+                        <div
+                          key={idx}
+                          className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center ${
+                            result === 'W' ? 'bg-green-600' : result === 'L' ? 'bg-red-600' : 'bg-slate-600'
+                          }`}
+                        >
+                          <span className="text-white font-bold text-[10px] md:text-xs leading-none">
+                            {result}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </td>
                   <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-center text-green-400 font-semibold">{u.wins}</td>
                   <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-center text-red-400 font-semibold">{u.losses}</td>
