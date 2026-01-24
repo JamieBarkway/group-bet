@@ -442,7 +442,7 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                             </span>
                           ));
                         })()}
-                        {player.results[i].outcome === "P" && player.username === selectedPlayer && (
+                        {player.results[i].outcome === "P" && player.username === selectedPlayer && !betPlaced && (
                           <button
                             onClick={() => handleRemovePrediction(player.username, i)}
                             disabled={removing}
