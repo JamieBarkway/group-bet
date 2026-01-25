@@ -115,30 +115,72 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
   }, []);
 
   // Auto-settle: when all pending picks' latest kickoff is > 2h ago, call results POST to settle
+  // Then check every 5 minutes if there are still pending results
   useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
     const trySettle = async () => {
-      if (!players.length) return;
+      if (!players.length) return false;
+      
       // Gather pending predictions with kickoff times
       const pending: Array<Date> = [];
       players.forEach((p) => {
         const pr = p.results.find((r) => r.outcome === "P" && r.prediction?.match?.startDateTimeUtc);
         if (pr) pending.push(new Date(pr.prediction!.match.startDateTimeUtc));
       });
-      if (!pending.length) return;
+      
+      if (!pending.length) return false; // No pending results
+      
       const latest = new Date(Math.max(...pending.map((d) => d.getTime())));
       const now = new Date();
-      if (now.getTime() - latest.getTime() < 2 * 60 * 60 * 1000) return;
+      
+      if (now.getTime() - latest.getTime() < 2 * 60 * 60 * 1000) return true; // Still too early
+      
+      // Try to settle
       try {
         const res = await fetch("/api/results", { method: "POST" });
         if (res.ok) {
-          // refresh players
+          // Refresh players
           const raw = await fetch("/api/picks/raw");
           const data = await raw.json();
           setPlayers(data);
+          
+          // Check if there are still pending results
+          const stillPending = data.some((p: PlayerResults) => 
+            p.results.some((r) => r.outcome === "P")
+          );
+          return stillPending;
         }
       } catch {}
+      
+      return true; // Keep checking if fetch failed
     };
-    trySettle();
+
+    const startSettleCheck = async () => {
+      const hasPending = await trySettle();
+      
+      // If there are still pending results after 2 hours, check every 5 minutes
+      if (hasPending && !intervalId) {
+        intervalId = setInterval(async () => {
+          const stillPending = await trySettle();
+          
+          // Stop checking when no more pending results
+          if (!stillPending && intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+          }
+        }, 5 * 60 * 1000); // 5 minutes
+      }
+    };
+
+    startSettleCheck();
+
+    // Cleanup interval on unmount
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, [players]);
 
   // Fetch match score from results API on demand
@@ -442,7 +484,7 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                             </span>
                           ));
                         })()}
-                        {player.results[i].outcome === "P" && player.username === selectedPlayer && !betPlaced && (
+                        {player.results[i].outcome === "P" && player.username === selectedPlayer && !betStatus && (
                           <button
                             onClick={() => handleRemovePrediction(player.username, i)}
                             disabled={removing}

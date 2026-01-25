@@ -233,7 +233,7 @@
         "emoji": "🔥🔥"
       },
       {
-        "outcome": "P",
+        "outcome": "W",
         "emoji": null,
         "prediction": {
           "type": "Home",
@@ -242,6 +242,10 @@
             "awayName": "Leyton Orient",
             "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
             "eventId": "ChXaTwa3"
+          },
+          "finalScore": {
+            "home": 2,
+            "away": 1
           }
         }
       }
@@ -607,7 +611,7 @@
         "emoji": "😡"
       },
       {
-        "outcome": "P",
+        "outcome": "W",
         "emoji": null,
         "prediction": {
           "type": "Home",
@@ -616,6 +620,10 @@
             "awayName": "Tranmere",
             "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
             "eventId": "zq68rhKD"
+          },
+          "finalScore": {
+            "home": 4,
+            "away": 2
           }
         }
       }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const API_KEY = "4P3oJiMP9rMuA3nYKRizNv2iQJLwkEcBpXXn43jz";
+const API_KEY = "aynWpIMpZHhxiZCiaVD9PLP1SltxLRr7fSue1wjk";
 
 // In-memory cache
 let cachedFixtures: any[] | null = null;
