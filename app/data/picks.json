@@ -107,7 +107,7 @@
         "emoji": null
       },
       {
-        "outcome": "P",
+        "outcome": "W",
         "emoji": null,
         "prediction": {
           "type": "Home",
@@ -116,6 +116,10 @@
             "awayName": "Bristol Rovers",
             "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
             "eventId": "xANanexn"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 0
           }
         }
       }
@@ -351,7 +355,7 @@
         "emoji": null
       },
       {
-        "outcome": "P",
+        "outcome": "W",
         "emoji": null,
         "prediction": {
           "type": "BTTS",
@@ -360,6 +364,10 @@
             "awayName": "Oxford Utd",
             "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
             "eventId": "Mu4kivK6"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 2
           }
         }
       }
@@ -473,7 +481,7 @@
         "emoji": "😡"
       },
       {
-        "outcome": "P",
+        "outcome": "W",
         "emoji": null,
         "prediction": {
           "type": "Home",
@@ -482,6 +490,10 @@
             "awayName": "Swansea",
             "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
             "eventId": "CUbxH15k"
+          },
+          "finalScore": {
+            "home": 2,
+            "away": 1
           }
         }
       }
@@ -717,8 +729,8 @@
         "emoji": null
       },
       {
-        "outcome": "P",
-        "emoji": null,
+        "outcome": "L",
+        "emoji": "🤢",
         "prediction": {
           "type": "Home",
           "match": {
@@ -726,6 +738,10 @@
             "awayName": "Stoke",
             "startDateTimeUtc": "2026-01-24T15:00:00.000Z",
             "eventId": "MROGxu5D"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 1
           }
         }
       }
