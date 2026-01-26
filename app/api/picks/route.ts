@@ -53,6 +53,7 @@ function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" 
   // Calculate longest loss streak
   let longestLossStreak = 0;
   let currentLossStreak = 0;
+  
 
   for (const result of user.results) {
     if (result.outcome === "W") {
@@ -71,6 +72,28 @@ function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" 
   const last5 = settledResults.slice(-5).map(r => r.outcome).join("");
   const form = last5 || "-";
 
+  // Calculate current streak
+  let currentStreak = 0;
+  const lastResult = settledResults.at(-1);
+  
+  if (lastResult) {
+    const targetOutcome = lastResult.outcome;
+    console.log("Last result:", targetOutcome);
+    
+    for (let i = settledResults.length - 1; i >= 0; i--) {
+      console.log("Next result", settledResults[i].outcome);
+      if (settledResults[i].outcome === targetOutcome) {
+        currentStreak++;
+        console.log("Current streak:", currentStreak);
+      } else {
+        break;
+      }
+    }
+    if (targetOutcome === "L"){
+      currentStreak *= -1;
+    }
+  }
+
   return { 
     user: user.username, 
     total, 
@@ -80,6 +103,7 @@ function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" 
     form,
     fineCount,
     fineTotal,
+    currentStreak,
     longestWinStreak,
     longestLossStreak,
     bttsPct,
