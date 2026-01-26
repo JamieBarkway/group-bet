@@ -122,6 +122,20 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
     const trySettle = async () => {
       if (!players.length) return false;
       
+      // Count total pending predictions
+      const pendingCount = players.filter((p) => 
+        p.results.some((r) => r.outcome === "P")
+      ).length;
+      
+      if (pendingCount === 0) return false; // No pending results
+      
+      // Check if we should call the results API:
+      // 1. All 6 players have pending results (full week ready to settle)
+      // 2. Some have pending and some have completed in the latest week (partial results)
+      const shouldCallResultsAPI = pendingCount === 6 || (pendingCount > 0 && pendingCount < 6);
+      
+      if (!shouldCallResultsAPI) return true; // Don't call API yet, but keep checking
+      
       // Gather pending predictions with kickoff times
       const pending: Array<Date> = [];
       players.forEach((p) => {
@@ -129,7 +143,7 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
         if (pr) pending.push(new Date(pr.prediction!.match.startDateTimeUtc));
       });
       
-      if (!pending.length) return false; // No pending results
+      if (!pending.length) return false; // No pending results with dates
       
       const latest = new Date(Math.max(...pending.map((d) => d.getTime())));
       const now = new Date();

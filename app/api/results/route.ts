@@ -4,6 +4,11 @@ import path from "path";
 
 const API_KEY = "aynWpIMpZHhxiZCiaVD9PLP1SltxLRr7fSue1wjk";
 
+// In-memory cache for results
+let cachedResults: any[] | null = null;
+let resultsCacheTimestamp: number | null = null;
+const RESULTS_CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
+
 const LEAGUES = [
   {
     name: "Premier League",
@@ -40,6 +45,15 @@ async function fetchLeagueResults(leagueName: string, endpoint: string) {
 
 export async function GET() {
 	try {
+		// Check if cache is valid (less than 10 minutes old)
+		const now = Date.now();
+		if (cachedResults && resultsCacheTimestamp && (now - resultsCacheTimestamp) < RESULTS_CACHE_DURATION_MS) {
+			console.log("Returning cached results data");
+			return NextResponse.json(cachedResults);
+		}
+
+		console.log("Fetching fresh results data from API");
+
 		const leaguePromises = LEAGUES.map((l) =>
 			fetchLeagueResults(l.name, l.endpoint)
 				.then((data) => ({ league: l.name, results: data }))
@@ -49,6 +63,11 @@ export async function GET() {
 		const all = sets.flatMap((s) =>
 			(Array.isArray(s.results) ? s.results : []).map((r: any) => ({ ...r, league: s.league }))
 		);
+
+		// Update cache
+		cachedResults = all;
+		resultsCacheTimestamp = now;
+
 		return NextResponse.json(all);
 	} catch (error) {
 		return NextResponse.json(
