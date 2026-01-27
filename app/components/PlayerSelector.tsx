@@ -7,6 +7,27 @@ type PlayerSelectorProps = {
   onPlayerSelected: (playerName: string) => void;
 };
 
+type PlayerData = {
+  username: string;
+  results: [{
+    outcome: string | null;
+    emoji: string | null;
+    prediction: {
+      type: string | null;
+      match: {
+        homeName: string;
+        awayName: string;
+        startDateTimeUtc: string;
+        eventId: string;
+      } | null;
+      finalScore: {
+        home: number;
+        away: number;
+      } | null;
+    } | null;
+  }];
+};
+
 export default function PlayerSelector({ onPlayerSelected }: PlayerSelectorProps) {
   const [players, setPlayers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +38,7 @@ export default function PlayerSelector({ onPlayerSelected }: PlayerSelectorProps
       try {
         const res = await fetch("/api/picks/raw");
         const data = await res.json();
-        const playerNames = data.map((p: any) => p.username);
+        const playerNames = data.map((p: PlayerData) => p.username);
         setPlayers(playerNames);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load players");

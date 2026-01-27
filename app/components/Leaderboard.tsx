@@ -132,8 +132,8 @@ export default function Leaderboard({ selectedPlayer }: { selectedPlayer?: strin
         const res = await fetch("/api/picks");
         const users = await res.json();
         setLeaderboardData(users);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -315,7 +315,7 @@ export default function Leaderboard({ selectedPlayer }: { selectedPlayer?: strin
                   <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-center text-red-400 font-semibold">{u.losses}</td>
                   <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-center">
                     <span className={`${u.currentStreak > 0 ? 'bg-green-600' : 'bg-red-600'} text-white px-2 md:px-3 py-1 rounded-full text-xs font-bold`}>
-                      {(u.currentStreak > 0 ? '🔥' : '💀') + u.currentStreak}
+                      {(u.currentStreak > 0 ? '🔥' : '💀') + Math.abs(u.currentStreak)}
                     </span>
                   </td>
                   <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-center">

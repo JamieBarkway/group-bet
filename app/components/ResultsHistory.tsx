@@ -204,8 +204,8 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
       setFetchingScore(true);
       try {
         const res = await fetch("/api/results");
-        const results = await res.json();
-        const match = results.find((r: any) => String(r.eventId || r.id) === String(resultDetail.match!.eventId));
+        const results: Array<{ eventId?: string; id?: string; homeScoreFt?: number | string; awayScoreFt?: number | string; homeScore?: number | string; awayScore?: number | string; home_score?: number | string; away_score?: number | string; home?: number | string; away?: number | string }> = await res.json();
+        const match = results.find((r) => String(r.eventId || r.id) === String(resultDetail.match!.eventId));
         if (match) {
           // Extract score from common fields
           const fields = [
