@@ -188,7 +188,10 @@ export default function WeekendFixtures({ selectedPlayer }: { selectedPlayer?: s
   };
 
   return (
-    <div className="space-y-4">
+    <div id="fixtures-section" className="space-y-4">
+      <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+            This Weekend's Fixtures
+          </h3>
       {Object.keys(fixturesByLeague).map((league) => {
         const isOpen = openLeagues[league] || false;
         const days = Object.keys(fixturesByLeague[league]);
