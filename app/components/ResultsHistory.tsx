@@ -520,6 +520,7 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
         </table>
       </div>
 
+
       {/* Emoji Key */}
       <div className="mt-6 bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -568,6 +569,33 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Winnings Table */}
+      <div className="mt-6">
+        <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+          <span className="text-green-400">💰</span> Winnings
+        </h3>
+        <div className="bg-slate-800 rounded-lg shadow-lg overflow-hidden border border-slate-700">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gradient-to-r from-slate-700 to-slate-600 border-b border-slate-600">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">Week</th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-slate-200">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="bg-slate-800 hover:bg-slate-700 transition-colors">
+                <td className="px-6 py-4 text-sm font-medium text-white">Week 22</td>
+                <td className="px-6 py-4 text-right">
+                  <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                    £337
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
