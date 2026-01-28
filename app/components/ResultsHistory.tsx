@@ -520,6 +520,57 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
         </table>
       </div>
 
+      {/* Emoji Key */}
+      <div className="mt-6 bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Streak Emojis */}
+          <div>
+            <h4 className="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">Streak Indicators</h4>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🔥</span>
+                <span className="text-slate-200 text-sm">3-5 win streak</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🔥🔥</span>
+                <span className="text-slate-200 text-sm">6+ win streak</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">😡</span>
+                <span className="text-slate-200 text-sm">3-5 loss streak</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">😡😡</span>
+                <span className="text-slate-200 text-sm">6+ loss streak</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Fine Emojis */}
+          <div>
+            <h4 className="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">Fine Emojis (£5 each)</h4>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">😴</span>
+                <span className="text-slate-200 text-sm">BTTS/O2.5 0-0</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🤢</span>
+                <span className="text-slate-200 text-sm">Only loser</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🤣</span>
+                <span className="text-slate-200 text-sm">3+ goals loss</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🤦‍♂️</span>
+                <span className="text-slate-200 text-sm">U2.5 goal fest</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Most Picked Teams */}
       {topThreeTeams.length > 0 && (
         <div className="mt-6">
