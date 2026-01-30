@@ -500,6 +500,19 @@
             "away": 1
           }
         }
+      },
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "O2.5",
+          "match": {
+            "homeName": "Brighton",
+            "awayName": "Everton",
+            "startDateTimeUtc": "2026-01-31T15:00:00.000Z",
+            "eventId": "vPKFVEM6"
+          }
+        }
       }
     ]
   },

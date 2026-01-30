@@ -288,7 +288,7 @@ export default function AllPicksBanner({
                   <span className="text-base">⏳</span>
                   <div className="leading-tight">
                     <div className="text-white font-semibold text-sm">
-                      Waiting for {nextPlayer}
+                      {nextPlayer}&apos;s bet...
                     </div>
                   </div>
                 </div>

@@ -461,7 +461,7 @@ export default function ResultsHistory({
                 <span className="text-lg">⏳</span>
                 <div className="leading-tight">
                   <div className="text-white font-semibold">
-                    Waiting for {nextPlayer}
+                    {nextPlayer}&apos;s bet...
                   </div>
                   <div className="text-amber-100 text-xs">
                     {allPredictionsInRound
