@@ -7,6 +7,7 @@ import PlayerSelector from "./components/PlayerSelector";
 import Leaderboard from "./components/Leaderboard";
 import ResultsHistory from "./components/ResultsHistory";
 import WeekendFixtures from "./components/Fixtures";
+import AllPicksBanner from "./components/AllPicksBanner";
 
 export default function Page() {
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
@@ -33,9 +34,13 @@ export default function Page() {
 
   return (
     <>
-      <Header selectedPlayer={selectedPlayer} onLogout={() => setSelectedPlayer(null)} />
+      <Header
+        selectedPlayer={selectedPlayer}
+        onLogout={() => setSelectedPlayer(null)}
+      />
       <main className="bg-gradient-to-br from-slate-900 to-slate-800 p-8">
         <div className="max-w-6xl mx-auto">
+          <AllPicksBanner selectedPlayer={selectedPlayer} />
           <Leaderboard selectedPlayer={selectedPlayer} />
           <ResultsHistory selectedPlayer={selectedPlayer} />
           <WeekendFixtures selectedPlayer={selectedPlayer} />

@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 
 type PlayerResults = {
   username: string;
-  results: Array<{ 
-    outcome: "W" | "L" | "P"; 
+  results: Array<{
+    outcome: "W" | "L" | "P";
     emoji: string | null;
     prediction?: {
       type: string;
@@ -14,30 +14,45 @@ type PlayerResults = {
         awayName: string;
         startDateTimeUtc: string;
         eventId: string;
-      }
-    }
+      };
+    };
   }>;
 };
 
-export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: string }) {
+export default function ResultsHistory({
+  selectedPlayer,
+}: {
+  selectedPlayer?: string;
+}) {
   const [players, setPlayers] = useState<PlayerResults[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [removing, setRemoving] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [betStatus, setBetStatus] = useState<{ week: number; placedBy: string } | null>(null);
+  const [betStatus, setBetStatus] = useState<{
+    week: number;
+    placedBy: string;
+  } | null>(null);
   const [markingBet, setMarkingBet] = useState(false);
   const [resultDetail, setResultDetail] = useState<{
     username: string;
     outcome: "W" | "L";
     type?: string;
-    match?: { homeName: string; awayName: string; startDateTimeUtc: string; eventId: string };
+    match?: {
+      homeName: string;
+      awayName: string;
+      startDateTimeUtc: string;
+      eventId: string;
+    };
     finalScore?: { home: number | null; away: number | null };
   } | null>(null);
   const [fetchingScore, setFetchingScore] = useState(false);
 
-  const handleRemovePrediction = async (username: string, resultIndex: number) => {
+  const handleRemovePrediction = async (
+    username: string,
+    resultIndex: number,
+  ) => {
     if (!confirm("Remove this prediction?")) return;
 
     setRemoving(true);
@@ -45,7 +60,7 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
       const res = await fetch("/api/predictions", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, resultIndex })
+        body: JSON.stringify({ username, resultIndex }),
       });
 
       if (!res.ok) {
@@ -68,10 +83,10 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
       const res = await fetch("/api/bet-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           username: selectedPlayer,
-          week: maxResults
-        })
+          week: maxResults,
+        }),
       });
 
       if (!res.ok) {
@@ -79,9 +94,19 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
       }
 
       // Update local state
-      setBetStatus({ week: maxResults, placedBy: selectedPlayer });
+      const newStatus = { week: maxResults, placedBy: selectedPlayer };
+      setBetStatus(newStatus);
+
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(
+        new CustomEvent("betStatusUpdated", {
+          detail: newStatus,
+        }),
+      );
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to mark bet as placed");
+      alert(
+        err instanceof Error ? err.message : "Failed to mark bet as placed",
+      );
     } finally {
       setMarkingBet(false);
     }
@@ -112,6 +137,23 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
 
     loadResults();
     loadBetStatus();
+
+    // Listen for bet status updates from other components
+    const handleBetStatusUpdate = (event: CustomEvent) => {
+      setBetStatus(event.detail);
+    };
+
+    window.addEventListener(
+      "betStatusUpdated",
+      handleBetStatusUpdate as EventListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "betStatusUpdated",
+        handleBetStatusUpdate as EventListener,
+      );
+    };
   }, []);
 
   // Auto-settle: when all pending picks' latest kickoff is > 2h ago, call results POST to settle
@@ -121,35 +163,38 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
 
     const trySettle = async () => {
       if (!players.length) return false;
-      
+
       // Count total pending predictions
-      const pendingCount = players.filter((p) => 
-        p.results.some((r) => r.outcome === "P")
+      const pendingCount = players.filter((p) =>
+        p.results.some((r) => r.outcome === "P"),
       ).length;
-      
+
       if (pendingCount === 0) return false; // No pending results
-      
+
       // Check if we should call the results API:
       // 1. All 6 players have pending results (full week ready to settle)
       // 2. Some have pending and some have completed in the latest week (partial results)
-      const shouldCallResultsAPI = pendingCount === 6 || (pendingCount > 0 && pendingCount < 6);
-      
+      const shouldCallResultsAPI =
+        pendingCount === 6 || (pendingCount > 0 && pendingCount < 6);
+
       if (!shouldCallResultsAPI) return true; // Don't call API yet, but keep checking
-      
+
       // Gather pending predictions with kickoff times
       const pending: Array<Date> = [];
       players.forEach((p) => {
-        const pr = p.results.find((r) => r.outcome === "P" && r.prediction?.match?.startDateTimeUtc);
+        const pr = p.results.find(
+          (r) => r.outcome === "P" && r.prediction?.match?.startDateTimeUtc,
+        );
         if (pr) pending.push(new Date(pr.prediction!.match.startDateTimeUtc));
       });
-      
+
       if (!pending.length) return false; // No pending results with dates
-      
+
       const latest = new Date(Math.max(...pending.map((d) => d.getTime())));
       const now = new Date();
-      
+
       if (now.getTime() - latest.getTime() < 2 * 60 * 60 * 1000) return true; // Still too early
-      
+
       // Try to settle
       try {
         const res = await fetch("/api/results", { method: "POST" });
@@ -158,32 +203,35 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
           const raw = await fetch("/api/picks/raw");
           const data = await raw.json();
           setPlayers(data);
-          
+
           // Check if there are still pending results
-          const stillPending = data.some((p: PlayerResults) => 
-            p.results.some((r) => r.outcome === "P")
+          const stillPending = data.some((p: PlayerResults) =>
+            p.results.some((r) => r.outcome === "P"),
           );
           return stillPending;
         }
       } catch {}
-      
+
       return true; // Keep checking if fetch failed
     };
 
     const startSettleCheck = async () => {
       const hasPending = await trySettle();
-      
+
       // If there are still pending results after 2 hours, check every 5 minutes
       if (hasPending && !intervalId) {
-        intervalId = setInterval(async () => {
-          const stillPending = await trySettle();
-          
-          // Stop checking when no more pending results
-          if (!stillPending && intervalId) {
-            clearInterval(intervalId);
-            intervalId = null;
-          }
-        }, 5 * 60 * 1000); // 5 minutes
+        intervalId = setInterval(
+          async () => {
+            const stillPending = await trySettle();
+
+            // Stop checking when no more pending results
+            if (!stillPending && intervalId) {
+              clearInterval(intervalId);
+              intervalId = null;
+            }
+          },
+          5 * 60 * 1000,
+        ); // 5 minutes
       }
     };
 
@@ -204,8 +252,22 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
       setFetchingScore(true);
       try {
         const res = await fetch("/api/results");
-        const results: Array<{ eventId?: string; id?: string; homeScoreFt?: number | string; awayScoreFt?: number | string; homeScore?: number | string; awayScore?: number | string; home_score?: number | string; away_score?: number | string; home?: number | string; away?: number | string }> = await res.json();
-        const match = results.find((r) => String(r.eventId || r.id) === String(resultDetail.match!.eventId));
+        const results: Array<{
+          eventId?: string;
+          id?: string;
+          homeScoreFt?: number | string;
+          awayScoreFt?: number | string;
+          homeScore?: number | string;
+          awayScore?: number | string;
+          home_score?: number | string;
+          away_score?: number | string;
+          home?: number | string;
+          away?: number | string;
+        }> = await res.json();
+        const match = results.find(
+          (r) =>
+            String(r.eventId || r.id) === String(resultDetail.match!.eventId),
+        );
         if (match) {
           // Extract score from common fields
           const fields = [
@@ -219,7 +281,12 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
           for (const [h, a] of fields) {
             const hv = match[h];
             const av = match[a];
-            if (hv !== undefined && hv !== null && av !== undefined && av !== null) {
+            if (
+              hv !== undefined &&
+              hv !== null &&
+              av !== undefined &&
+              av !== null
+            ) {
               home = typeof hv === "string" ? parseInt(hv, 10) : hv;
               away = typeof av === "string" ? parseInt(av, 10) : av;
               break;
@@ -227,7 +294,7 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
           }
           if (home !== null && away !== null) {
             setResultDetail((prev) =>
-              prev ? { ...prev, finalScore: { home, away } } : null
+              prev ? { ...prev, finalScore: { home, away } } : null,
             );
           }
         }
@@ -250,30 +317,40 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
     }
   }, [loading]);
 
-  if (loading) return (
-    <div className="flex items-center justify-center p-8">
-      <p className="text-xl text-slate-300">Loading results…</p>
-    </div>
-  );
-  
-  if (error) return (
-    <div className="flex items-center justify-center p-8">
-      <p className="text-xl text-red-400">Error: {error}</p>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="flex items-center justify-center p-8">
+        <p className="text-xl text-slate-300">Loading results…</p>
+      </div>
+    );
 
-  const maxResults = Math.max(...players.map(p => p.results.length));
+  if (error)
+    return (
+      <div className="flex items-center justify-center p-8">
+        <p className="text-xl text-red-400">Error: {error}</p>
+      </div>
+    );
+
+  const maxResults = Math.max(...players.map((p) => p.results.length));
   const totalWeeks = maxResults + 1; // include upcoming week column
 
   // Fixed turn order repeating each week
-  const turnOrder = ["Brett", "Andy Barky", "The Real Barky", "Hudo", "Gaz", "Clarky"];
-  const turnForWeek = (weekIndex: number) => turnOrder[weekIndex % turnOrder.length];
+  const turnOrder = [
+    "Brett",
+    "Andy Barky",
+    "The Real Barky",
+    "Hudo",
+    "Gaz",
+    "Clarky",
+  ];
+  const turnForWeek = (weekIndex: number) =>
+    turnOrder[weekIndex % turnOrder.length];
 
   // Determine which rounds everyone won
   const allWinRounds = new Set<number>();
   for (let i = 0; i < maxResults; i++) {
-    const allWon = players.every(player => 
-      player.results[i] && player.results[i].outcome === "W"
+    const allWon = players.every(
+      (player) => player.results[i] && player.results[i].outcome === "W",
     );
     if (allWon) {
       allWinRounds.add(i);
@@ -282,29 +359,39 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
 
   // Get all pending predictions
   const pendingPredictions = players
-    .map(player => ({
+    .map((player) => ({
       username: player.username,
-      prediction: player.results.find(r => r.outcome === "P")
+      prediction: player.results.find((r) => r.outcome === "P"),
     }))
-    .filter(p => p.prediction);
+    .filter((p) => p.prediction);
 
-    const mostPickedTeams = players.flatMap(player => 
-        player.results
-            .filter(r => r.prediction && r.prediction.match != null && (r.prediction.type === "Home" || r.prediction.type === "Away"))
-            .map(result => ({
-                team: result.prediction!.type === "Home" ? result.prediction!.match.homeName : result.prediction!.match.awayName
-            }))
-    );
-    const teamCounts = mostPickedTeams.reduce((acc, { team }) => {
-        acc[team] = (acc[team] || 0) + 1;
-        return acc;
-    }, {} as Record<string, number>);
+  const mostPickedTeams = players.flatMap((player) =>
+    player.results
+      .filter(
+        (r) =>
+          r.prediction &&
+          r.prediction.match != null &&
+          (r.prediction.type === "Home" || r.prediction.type === "Away"),
+      )
+      .map((result) => ({
+        team:
+          result.prediction!.type === "Home"
+            ? result.prediction!.match.homeName
+            : result.prediction!.match.awayName,
+      })),
+  );
+  const teamCounts = mostPickedTeams.reduce(
+    (acc, { team }) => {
+      acc[team] = (acc[team] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
-    const topThreeTeams = Object.entries(teamCounts)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 3)
-        .map(([team]) => team);
-
+  const topThreeTeams = Object.entries(teamCounts)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 3)
+    .map(([team]) => team);
 
   // Fine ledger: £5 for each of these emojis
   const finePattern = /(😴|🤢|🤣|🤦‍♂️|😡)/g;
@@ -327,23 +414,28 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
   // Find the first round that's incomplete (doesn't have all W/L results)
   let turnRoundIndex = maxResults; // default to next round
   for (let i = 0; i < maxResults; i++) {
-    const isComplete = players.every(player => 
-      player.results[i] && (player.results[i].outcome === "W" || player.results[i].outcome === "L")
+    const isComplete = players.every(
+      (player) =>
+        player.results[i] &&
+        (player.results[i].outcome === "W" ||
+          player.results[i].outcome === "L"),
     );
     if (!isComplete) {
       turnRoundIndex = i;
       break;
     }
   }
-  
+
   const currentWeek = maxResults;
   const nextPlayer = turnForWeek(turnRoundIndex);
   const isMyTurn = nextPlayer === selectedPlayer;
   const betPlaced = betStatus?.placedBy;
 
   // Only enable bet placement when everyone has a pending prediction for this round
-  const allPredictionsInRound = players.every(player => 
-    player.results[turnRoundIndex] && player.results[turnRoundIndex].outcome === "P"
+  const allPredictionsInRound = players.every(
+    (player) =>
+      player.results[turnRoundIndex] &&
+      player.results[turnRoundIndex].outcome === "P",
   );
 
   return (
@@ -368,8 +460,14 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
               <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/90 to-orange-600/90 shadow shadow-orange-900/40 border border-orange-300/40">
                 <span className="text-lg">⏳</span>
                 <div className="leading-tight">
-                  <div className="text-white font-semibold">Waiting for {nextPlayer}</div>
-                  <div className="text-amber-100 text-xs">{allPredictionsInRound ? "Ready to place" : "Need all predictions"}</div>
+                  <div className="text-white font-semibold">
+                    Waiting for {nextPlayer}
+                  </div>
+                  <div className="text-amber-100 text-xs">
+                    {allPredictionsInRound
+                      ? "Ready to place"
+                      : "Need all predictions"}
+                  </div>
                 </div>
               </div>
             )}
@@ -406,8 +504,8 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                 Player
               </th>
               {Array.from({ length: totalWeeks }, (_, i) => (
-                <th 
-                  key={i} 
+                <th
+                  key={i}
                   className={`px-3 py-2 text-center text-xs font-semibold min-w-[60px] ${
                     i < maxResults && allWinRounds.has(i)
                       ? "bg-yellow-600 text-yellow-100"
@@ -441,17 +539,23 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                 className={`border-b border-slate-700 transition-colors ${
                   playerIndex % 2 === 0 ? "bg-slate-800" : "bg-slate-750"
                 } hover:bg-slate-700 ${
-                  player.username === selectedPlayer ? "border-l-4 border-l-yellow-400" : ""
+                  player.username === selectedPlayer
+                    ? "border-l-4 border-l-yellow-400"
+                    : ""
                 }`}
               >
-                <td className={`px-2 py-2 md:px-6 md:py-4 text-xs md:text-sm font-medium text-white sticky left-0 z-20 bg-slate-800`}>
+                <td
+                  className={`px-2 py-2 md:px-6 md:py-4 text-xs md:text-sm font-medium text-white sticky left-0 z-20 bg-slate-800`}
+                >
                   {player.username}
                 </td>
                 {Array.from({ length: totalWeeks }, (_, i) => (
-                  <td 
-                    key={i} 
+                  <td
+                    key={i}
                     className={`px-1 py-2 md:px-3 md:py-4 text-center text-xs md:text-sm ${
-                      i < maxResults && allWinRounds.has(i) ? "bg-yellow-600 bg-opacity-20" : ""
+                      i < maxResults && allWinRounds.has(i)
+                        ? "bg-yellow-600 bg-opacity-20"
+                        : ""
                     }`}
                   >
                     {i >= player.results.length ? (
@@ -461,7 +565,10 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                         <span
                           onClick={() => {
                             const r = player.results[i];
-                            if ((r.outcome === "W" || r.outcome === "L") && r.prediction) {
+                            if (
+                              (r.outcome === "W" || r.outcome === "L") &&
+                              r.prediction
+                            ) {
                               setResultDetail({
                                 username: player.username,
                                 outcome: r.outcome,
@@ -475,39 +582,53 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                             player.results[i].outcome === "W"
                               ? "bg-green-600 text-white"
                               : player.results[i].outcome === "L"
-                              ? "bg-red-600 text-white"
-                              : "bg-blue-600 text-white"
+                                ? "bg-red-600 text-white"
+                                : "bg-blue-600 text-white"
                           } ${player.results[i].prediction && (player.results[i].outcome === "W" || player.results[i].outcome === "L") ? "cursor-pointer ring-0 hover:ring-2 hover:ring-offset-2 hover:ring-offset-slate-800 hover:ring-white/40" : ""}`}
-                          title={player.results[i].outcome === "P" && player.results[i].prediction 
-                            ? `${player.results[i].prediction?.type}: ${player.results[i].prediction?.match.homeName} vs ${player.results[i].prediction?.match.awayName}`
-                            : undefined
+                          title={
+                            player.results[i].outcome === "P" &&
+                            player.results[i].prediction
+                              ? `${player.results[i].prediction?.type}: ${player.results[i].prediction?.match.homeName} vs ${player.results[i].prediction?.match.awayName}`
+                              : undefined
                           }
                         >
                           {player.results[i].outcome}
                         </span>
-                        {player.results[i].emoji && (() => {
-                          const emoji = player.results[i].emoji || "";
-                          const chars = emoji.split(/(?=[\p{Emoji_Presentation}])/u).filter(c => /[\p{Emoji}]/u.test(c));
-                          const positions = ["-top-2 -left-2", "-top-2 -right-2", "-bottom-2 -left-2", "-bottom-2 -right-2"];
-                          return chars.slice(0, 4).map((ch, idx) => (
-                            <span
-                              key={idx}
-                              className={`absolute ${positions[idx]} text-lg leading-none pointer-events-none`}
+                        {player.results[i].emoji &&
+                          (() => {
+                            const emoji = player.results[i].emoji || "";
+                            const chars = emoji
+                              .split(/(?=[\p{Emoji_Presentation}])/u)
+                              .filter((c) => /[\p{Emoji}]/u.test(c));
+                            const positions = [
+                              "-top-2 -left-2",
+                              "-top-2 -right-2",
+                              "-bottom-2 -left-2",
+                              "-bottom-2 -right-2",
+                            ];
+                            return chars.slice(0, 4).map((ch, idx) => (
+                              <span
+                                key={idx}
+                                className={`absolute ${positions[idx]} text-lg leading-none pointer-events-none`}
+                              >
+                                {ch}
+                              </span>
+                            ));
+                          })()}
+                        {player.results[i].outcome === "P" &&
+                          player.username === selectedPlayer &&
+                          !betStatus && (
+                            <button
+                              onClick={() =>
+                                handleRemovePrediction(player.username, i)
+                              }
+                              disabled={removing}
+                              className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Remove prediction"
                             >
-                              {ch}
-                            </span>
-                          ));
-                        })()}
-                        {player.results[i].outcome === "P" && player.username === selectedPlayer && !betStatus && (
-                          <button
-                            onClick={() => handleRemovePrediction(player.username, i)}
-                            disabled={removing}
-                            className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-                            title="Remove prediction"
-                          >
-                            −
-                          </button>
-                        )}
+                              −
+                            </button>
+                          )}
                       </div>
                     ) : (
                       <span className="text-slate-600">-</span>
@@ -520,13 +641,14 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
         </table>
       </div>
 
-
       {/* Emoji Key */}
       <div className="mt-6 bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Streak Emojis */}
           <div>
-            <h4 className="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">Streak Indicators</h4>
+            <h4 className="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
+              Streak Indicators
+            </h4>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔥</span>
@@ -546,10 +668,12 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
               </div>
             </div>
           </div>
-          
+
           {/* Fine Emojis */}
           <div>
-            <h4 className="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">Fine Emojis (£5 each)</h4>
+            <h4 className="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
+              Fine Emojis (£5 each)
+            </h4>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">😴</span>
@@ -581,13 +705,19 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
           <table className="w-full">
             <thead>
               <tr className="bg-gradient-to-r from-slate-700 to-slate-600 border-b border-slate-600">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">Week</th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-slate-200">Amount</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">
+                  Week
+                </th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-slate-200">
+                  Amount
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr className="bg-slate-800 hover:bg-slate-700 transition-colors">
-                <td className="px-6 py-4 text-sm font-medium text-white">Week 22</td>
+                <td className="px-6 py-4 text-sm font-medium text-white">
+                  Week 22
+                </td>
                 <td className="px-6 py-4 text-right">
                   <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-bold">
                     £337
@@ -609,9 +739,15 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
             <table className="w-full">
               <thead>
                 <tr className="bg-gradient-to-r from-slate-700 to-slate-600 border-b border-slate-600">
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">Rank</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">Team</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-slate-200">Picks</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">
+                    Rank
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-200">
+                    Team
+                  </th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-slate-200">
+                    Picks
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -627,7 +763,9 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                       {index === 1 && "🥈"}
                       {index === 2 && "🥉"}
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium text-white">{team}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-white">
+                      {team}
+                    </td>
                     <td className="px-6 py-4 text-center">
                       <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
                         {teamCounts[team]}
@@ -643,11 +781,11 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
 
       {/* Modal for showing all selections */}
       {showModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
           onClick={() => setShowModal(false)}
         >
-          <div 
+          <div
             className="bg-slate-800 rounded-lg shadow-2xl max-w-md w-full border-2 border-purple-500"
             onClick={(e) => e.stopPropagation()}
           >
@@ -664,22 +802,28 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                   ×
                 </button>
               </div>
-              <p className="text-purple-100 text-sm mt-1">Upcoming Round Selections</p>
+              <p className="text-purple-100 text-sm mt-1">
+                Upcoming Round Selections
+              </p>
             </div>
 
             {/* Betslip Content */}
             <div className="p-6 max-h-[70vh] overflow-y-auto">
               {pendingPredictions.length === 0 ? (
-                <p className="text-slate-400 text-center py-8">No selections yet</p>
+                <p className="text-slate-400 text-center py-8">
+                  No selections yet
+                </p>
               ) : (
                 <div className="space-y-3">
                   {pendingPredictions.map((item, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="bg-slate-700 border border-slate-600 rounded-lg p-4 hover:border-purple-500 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-bold text-white text-lg">{item.username}</span>
+                        <span className="font-bold text-white text-lg">
+                          {item.username}
+                        </span>
                         <span className="px-3 py-1 bg-purple-600 text-white text-xs font-bold rounded-full">
                           {item.prediction?.prediction?.type}
                         </span>
@@ -687,17 +831,23 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                       {item.prediction?.prediction?.match && (
                         <div className="text-sm text-slate-300">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold">{item.prediction.prediction.match.homeName}</span>
+                            <span className="font-semibold">
+                              {item.prediction.prediction.match.homeName}
+                            </span>
                             <span className="text-slate-500">vs</span>
-                            <span className="font-semibold">{item.prediction.prediction.match.awayName}</span>
+                            <span className="font-semibold">
+                              {item.prediction.prediction.match.awayName}
+                            </span>
                           </div>
                           <div className="text-xs text-slate-400">
-                            {new Date(item.prediction.prediction.match.startDateTimeUtc).toLocaleString("en-GB", {
+                            {new Date(
+                              item.prediction.prediction.match.startDateTimeUtc,
+                            ).toLocaleString("en-GB", {
                               weekday: "short",
                               month: "short",
                               day: "numeric",
                               hour: "2-digit",
-                              minute: "2-digit"
+                              minute: "2-digit",
                             })}
                           </div>
                         </div>
@@ -712,7 +862,9 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
             <div className="bg-slate-900 px-6 py-4 rounded-b-lg border-t border-slate-700">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-400">Total Selections</span>
-                <span className="text-white font-bold text-lg">{pendingPredictions.length}</span>
+                <span className="text-white font-bold text-lg">
+                  {pendingPredictions.length}
+                </span>
               </div>
             </div>
           </div>
@@ -729,12 +881,20 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
             className="bg-slate-800 rounded-lg shadow-2xl w-full max-w-md border border-slate-700"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className={`px-6 py-4 rounded-t-lg ${resultDetail.outcome === "W" ? "bg-green-700" : "bg-red-700"}`}>
+            <div
+              className={`px-6 py-4 rounded-t-lg ${resultDetail.outcome === "W" ? "bg-green-700" : "bg-red-700"}`}
+            >
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold text-white">
-                  {resultDetail.outcome === "W" ? "✅ Win" : "❌ Loss"} • {resultDetail.username}
+                  {resultDetail.outcome === "W" ? "✅ Win" : "❌ Loss"} •{" "}
+                  {resultDetail.username}
                 </h3>
-                <button onClick={() => setResultDetail(null)} className="text-white text-2xl leading-none">×</button>
+                <button
+                  onClick={() => setResultDetail(null)}
+                  className="text-white text-2xl leading-none"
+                >
+                  ×
+                </button>
               </div>
             </div>
             <div className="p-6 space-y-4">
@@ -742,10 +902,14 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                 <>
                   <div className="text-center">
                     <div className="text-white font-semibold text-base mb-1">
-                      {resultDetail.match.homeName} <span className="text-slate-400">vs</span> {resultDetail.match.awayName}
+                      {resultDetail.match.homeName}{" "}
+                      <span className="text-slate-400">vs</span>{" "}
+                      {resultDetail.match.awayName}
                     </div>
                     <div className="text-xs text-slate-400">
-                      {new Date(resultDetail.match.startDateTimeUtc).toLocaleString("en-GB", {
+                      {new Date(
+                        resultDetail.match.startDateTimeUtc,
+                      ).toLocaleString("en-GB", {
                         weekday: "short",
                         month: "short",
                         day: "numeric",
@@ -756,23 +920,34 @@ export default function ResultsHistory({ selectedPlayer }: { selectedPlayer?: st
                   </div>
                   {resultDetail.finalScore && (
                     <div className="bg-slate-700 rounded-lg p-4 text-center">
-                      <div className="text-slate-300 text-xs uppercase tracking-wide mb-2">Final Score</div>
+                      <div className="text-slate-300 text-xs uppercase tracking-wide mb-2">
+                        Final Score
+                      </div>
                       <div className="text-white text-3xl font-bold">
-                        {resultDetail.finalScore.home ?? "-"} <span className="text-slate-400 text-lg">-</span> {resultDetail.finalScore.away ?? "-"}
+                        {resultDetail.finalScore.home ?? "-"}{" "}
+                        <span className="text-slate-400 text-lg">-</span>{" "}
+                        {resultDetail.finalScore.away ?? "-"}
                       </div>
                     </div>
                   )}
                   {!resultDetail.finalScore && (
                     <div className="bg-slate-700 rounded-lg p-4 text-center">
-                      <div className="text-slate-300 text-xs uppercase tracking-wide mb-2">Final Score</div>
-                      <div className="text-slate-400 text-sm">{fetchingScore ? "Loading..." : "Score unavailable"}</div>
+                      <div className="text-slate-300 text-xs uppercase tracking-wide mb-2">
+                        Final Score
+                      </div>
+                      <div className="text-slate-400 text-sm">
+                        {fetchingScore ? "Loading..." : "Score unavailable"}
+                      </div>
                     </div>
                   )}
                 </>
               )}
               {typeof resultDetail.type === "string" && (
                 <div className="text-slate-200 text-sm">
-                  <span className="text-slate-400">Your pick:</span> <span className="font-semibold text-white">{resultDetail.type}</span>
+                  <span className="text-slate-400">Your pick:</span>{" "}
+                  <span className="font-semibold text-white">
+                    {resultDetail.type}
+                  </span>
                 </div>
               )}
             </div>
