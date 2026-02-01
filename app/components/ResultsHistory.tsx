@@ -35,6 +35,7 @@ export default function ResultsHistory({
     placedBy: string;
   } | null>(null);
   const [markingBet, setMarkingBet] = useState(false);
+  const [manualSettling, setManualSettling] = useState(false);
   const [resultDetail, setResultDetail] = useState<{
     username: string;
     outcome: "W" | "L";
@@ -112,6 +113,36 @@ export default function ResultsHistory({
     }
   };
 
+  const handleManualSettle = async () => {
+    if (
+      !confirm("Are you sure you want to manually settle all pending results?")
+    )
+      return;
+
+    setManualSettling(true);
+    try {
+      console.log("Manually settling results...");
+      const res = await fetch("/api/results", { method: "POST" });
+
+      if (!res.ok) {
+        throw new Error("Failed to settle results");
+      }
+
+      console.log("Results settled successfully");
+      // Refresh players data
+      const raw = await fetch("/api/picks/raw");
+      const data = await raw.json();
+      setPlayers(data);
+
+      alert("Results updated successfully!");
+    } catch (err) {
+      console.error("Error settling results:", err);
+      alert(err instanceof Error ? err.message : "Failed to settle results");
+    } finally {
+      setManualSettling(false);
+    }
+  };
+
   useEffect(() => {
     const loadResults = async () => {
       try {
@@ -160,9 +191,10 @@ export default function ResultsHistory({
   // Then check every 5 minutes if there are still pending results
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
+    let isActive = true;
 
     const trySettle = async () => {
-      if (!players.length) return false;
+      if (!players.length || !isActive) return false;
 
       // Count total pending predictions
       const pendingCount = players.filter((p) =>
@@ -170,14 +202,6 @@ export default function ResultsHistory({
       ).length;
 
       if (pendingCount === 0) return false; // No pending results
-
-      // Check if we should call the results API:
-      // 1. All 6 players have pending results (full week ready to settle)
-      // 2. Some have pending and some have completed in the latest week (partial results)
-      const shouldCallResultsAPI =
-        pendingCount === 6 || (pendingCount > 0 && pendingCount < 6);
-
-      if (!shouldCallResultsAPI) return true; // Don't call API yet, but keep checking
 
       // Gather pending predictions with kickoff times
       const pending: Array<Date> = [];
@@ -197,8 +221,10 @@ export default function ResultsHistory({
 
       // Try to settle
       try {
+        console.log("Attempting to settle results...");
         const res = await fetch("/api/results", { method: "POST" });
         if (res.ok) {
+          console.log("Results settled successfully");
           // Refresh players
           const raw = await fetch("/api/picks/raw");
           const data = await raw.json();
@@ -209,23 +235,33 @@ export default function ResultsHistory({
             p.results.some((r) => r.outcome === "P"),
           );
           return stillPending;
+        } else {
+          console.error("Failed to settle results:", res.status);
         }
-      } catch {}
+      } catch (err) {
+        console.error("Error settling results:", err);
+      }
 
       return true; // Keep checking if fetch failed
     };
 
     const startSettleCheck = async () => {
+      if (!isActive) return;
+
       const hasPending = await trySettle();
 
-      // If there are still pending results after 2 hours, check every 5 minutes
-      if (hasPending && !intervalId) {
+      // Set up interval to check every 5 minutes if there are pending results
+      if (hasPending && !intervalId && isActive) {
+        console.log("Starting 5-minute settle check interval");
         intervalId = setInterval(
           async () => {
+            if (!isActive) return;
+
             const stillPending = await trySettle();
 
             // Stop checking when no more pending results
             if (!stillPending && intervalId) {
+              console.log("No more pending results, stopping interval");
               clearInterval(intervalId);
               intervalId = null;
             }
@@ -235,12 +271,17 @@ export default function ResultsHistory({
       }
     };
 
-    startSettleCheck();
+    // Only start checking if we have players data
+    if (players.length > 0) {
+      startSettleCheck();
+    }
 
-    // Cleanup interval on unmount
+    // Cleanup interval on unmount or when dependencies change
     return () => {
+      isActive = false;
       if (intervalId) {
         clearInterval(intervalId);
+        intervalId = null;
       }
     };
   }, [players]);
@@ -952,6 +993,21 @@ export default function ResultsHistory({
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Manual Settle Button - Only for The Real Barky */}
+      {selectedPlayer === "The Real Barky" && (
+        <div className="mt-8 flex justify-center">
+          <button
+            onClick={handleManualSettle}
+            disabled={manualSettling}
+            className="px-6 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {manualSettling
+              ? "Updating Results..."
+              : "⚡ Manual Settle Results"}
+          </button>
         </div>
       )}
     </div>
