@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const API_KEY = "aynWpIMpZHhxiZCiaVD9PLP1SltxLRr7fSue1wjk";
+const API_KEY = "wduFiC24P0EzR2GYJvaMONjPE7ECHKHexnhcoHHs";
 
 // In-memory cache
 let cachedFixtures: any[] | null = null;
@@ -17,7 +17,7 @@ const LEAGUES = [
     name: "Championship",
     endpoint:
       "https://api.sportdb.dev/api/flashscore/football/england:198/championship:2DSCa5fE/2025-2026/fixtures?page=1",
-  },  
+  },
   {
     name: "League One",
     endpoint:
@@ -50,7 +50,11 @@ export async function GET() {
   try {
     // Check if cache is valid (less than 24 hours old)
     const now = Date.now();
-    if (cachedFixtures && cacheTimestamp && (now - cacheTimestamp) < CACHE_DURATION_MS) {
+    if (
+      cachedFixtures &&
+      cacheTimestamp &&
+      now - cacheTimestamp < CACHE_DURATION_MS
+    ) {
       console.log("Returning cached fixtures data");
       return NextResponse.json(cachedFixtures);
     }
@@ -58,24 +62,23 @@ export async function GET() {
     console.log("Fetching fresh fixtures data from API");
 
     // Fetch all leagues in parallel
-    const leaguePromises = LEAGUES.map(league =>
+    const leaguePromises = LEAGUES.map((league) =>
       fetchLeagueFixtures(league.name, league.endpoint)
-        .then(data => ({
+        .then((data) => ({
           league: league.name,
           fixtures: data,
         }))
-        .catch(error => ({
+        .catch((error) => ({
           league: league.name,
           error: error.message,
           fixtures: [],
-        }))
+        })),
     );
 
     const results = await Promise.all(leaguePromises);
 
-
     // Merge all fixtures with league information
-    const allFixtures = results.flatMap(result => {
+    const allFixtures = results.flatMap((result) => {
       const fixturesArray = Array.isArray(result.fixtures)
         ? result.fixtures
         : [];
@@ -106,7 +109,7 @@ export async function GET() {
         error: "Server error",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

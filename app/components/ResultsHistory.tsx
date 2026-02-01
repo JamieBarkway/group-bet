@@ -187,104 +187,91 @@ export default function ResultsHistory({
     };
   }, []);
 
-  // Auto-settle: when all pending picks' latest kickoff is > 2h ago, call results POST to settle
-  // Then check every 5 minutes if there are still pending results
+  // Auto-settle: settle results 135 minutes after the latest game starts
   useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
+    if (!players.length) return;
+
+    let timeoutId: NodeJS.Timeout | null = null;
     let isActive = true;
 
-    const trySettle = async () => {
-      if (!players.length || !isActive) return false;
+    const settleResults = async () => {
+      if (!isActive) return;
+
+      try {
+        console.log("Settling results 135 minutes after latest kickoff...");
+        const settleRes = await fetch("/api/results", { method: "POST" });
+        if (settleRes.ok) {
+          console.log("Results settled successfully");
+          // Refresh players in state
+          const refreshRes = await fetch("/api/picks/raw");
+          const refreshData = await refreshRes.json();
+          setPlayers(refreshData);
+        } else {
+          console.error("Failed to settle results:", settleRes.status);
+        }
+      } catch (err) {
+        console.error("Error settling results:", err);
+      }
+    };
+
+    const scheduleSettle = async () => {
+      if (!isActive) return;
+
+      // Get fresh data to check
+      const res = await fetch("/api/picks/raw");
+      const data = await res.json();
 
       // Count total pending predictions
-      const pendingCount = players.filter((p) =>
+      const pendingCount = data.filter((p: PlayerResults) =>
         p.results.some((r) => r.outcome === "P"),
       ).length;
 
-      if (pendingCount === 0) return false; // No pending results
+      if (pendingCount === 0) return; // No pending results
 
       // Gather pending predictions with kickoff times
       const pending: Array<Date> = [];
-      players.forEach((p) => {
+      data.forEach((p: PlayerResults) => {
         const pr = p.results.find(
           (r) => r.outcome === "P" && r.prediction?.match?.startDateTimeUtc,
         );
         if (pr) pending.push(new Date(pr.prediction!.match.startDateTimeUtc));
       });
 
-      if (!pending.length) return false; // No pending results with dates
+      if (!pending.length) return; // No pending results with dates
 
-      const latest = new Date(Math.max(...pending.map((d) => d.getTime())));
+      const latestKickoff = new Date(
+        Math.max(...pending.map((d) => d.getTime())),
+      );
+      const settleTime = new Date(latestKickoff.getTime() + 135 * 60 * 1000); // 135 minutes after kickoff
       const now = new Date();
+      const msUntilSettle = settleTime.getTime() - now.getTime();
 
-      if (now.getTime() - latest.getTime() < 2 * 60 * 60 * 1000) return true; // Still too early
-
-      // Try to settle
-      try {
-        console.log("Attempting to settle results...");
-        const res = await fetch("/api/results", { method: "POST" });
-        if (res.ok) {
-          console.log("Results settled successfully");
-          // Refresh players
-          const raw = await fetch("/api/picks/raw");
-          const data = await raw.json();
-          setPlayers(data);
-
-          // Check if there are still pending results
-          const stillPending = data.some((p: PlayerResults) =>
-            p.results.some((r) => r.outcome === "P"),
-          );
-          return stillPending;
-        } else {
-          console.error("Failed to settle results:", res.status);
-        }
-      } catch (err) {
-        console.error("Error settling results:", err);
-      }
-
-      return true; // Keep checking if fetch failed
-    };
-
-    const startSettleCheck = async () => {
-      if (!isActive) return;
-
-      const hasPending = await trySettle();
-
-      // Set up interval to check every 5 minutes if there are pending results
-      if (hasPending && !intervalId && isActive) {
-        console.log("Starting 5-minute settle check interval");
-        intervalId = setInterval(
-          async () => {
-            if (!isActive) return;
-
-            const stillPending = await trySettle();
-
-            // Stop checking when no more pending results
-            if (!stillPending && intervalId) {
-              console.log("No more pending results, stopping interval");
-              clearInterval(intervalId);
-              intervalId = null;
-            }
-          },
-          5 * 60 * 1000,
-        ); // 5 minutes
+      if (msUntilSettle <= 0) {
+        // Time has already passed, settle immediately
+        console.log(
+          "Latest game started more than 135 minutes ago, settling now...",
+        );
+        await settleResults();
+      } else {
+        // Schedule settlement for the future
+        console.log(
+          `Scheduling auto-settle for ${settleTime.toLocaleString()} (in ${Math.round(msUntilSettle / 60000)} minutes)`,
+        );
+        timeoutId = setTimeout(settleResults, msUntilSettle);
       }
     };
 
-    // Only start checking if we have players data
-    if (players.length > 0) {
-      startSettleCheck();
-    }
+    scheduleSettle();
 
-    // Cleanup interval on unmount or when dependencies change
+    // Cleanup timeout on unmount
     return () => {
       isActive = false;
-      if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = null;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
       }
     };
-  }, [players]);
+  }, []); // Remove players dependency to prevent infinite loop
 
   // Fetch match score from results API on demand
   useEffect(() => {
