@@ -28,6 +28,11 @@ const LEAGUES = [
     endpoint:
       "https://api.sportdb.dev/api/flashscore/football/england:198/league-two:0MwU4NW6/2025-2026/fixtures?page=1",
   },
+  {
+    name: "FA Cup",
+    endpoint:
+      "https://api.sportdb.dev/api/flashscore/football/england:198/fa-cup:lYQtaqPQ/2025-2026/fixtures?page=1",
+  },
 ];
 
 async function fetchLeagueFixtures(leagueName: string, leagueEndpoint: string) {
@@ -50,14 +55,14 @@ export async function GET() {
   try {
     // Check if cache is valid (less than 24 hours old)
     const now = Date.now();
-    if (
-      cachedFixtures &&
-      cacheTimestamp &&
-      now - cacheTimestamp < CACHE_DURATION_MS
-    ) {
-      console.log("Returning cached fixtures data");
-      return NextResponse.json(cachedFixtures);
-    }
+    // if (
+    //   cachedFixtures &&
+    //   cacheTimestamp &&
+    //   now - cacheTimestamp < CACHE_DURATION_MS
+    // ) {
+    //   console.log("Returning cached fixtures data");
+    //   return NextResponse.json(cachedFixtures);
+    // }
 
     console.log("Fetching fresh fixtures data from API");
 

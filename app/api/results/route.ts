@@ -30,6 +30,11 @@ const LEAGUES = [
     endpoint:
       "https://api.sportdb.dev/api/flashscore/football/england:198/league-two:0MwU4NW6/2025-2026/results?page=1",
   },
+  {
+    name: "FA Cup",
+    endpoint:
+      "https://api.sportdb.dev/api/flashscore/football/england:198/fa-cup:lYQtaqPQ/2025-2026/results?page=1",
+  },
 ];
 const DATA_PATH = path.join(process.cwd(), "app/data", "picks.json");
 
