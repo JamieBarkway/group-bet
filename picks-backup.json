@@ -139,6 +139,19 @@
             "away": 1
           }
         }
+      },
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Burnley",
+            "awayName": "West Ham",
+            "startDateTimeUtc": "2026-02-07T15:00:00.000Z",
+            "eventId": "UyEecLWo"
+          }
+        }
       }
     ]
   },
@@ -279,6 +292,23 @@
           },
           "finalScore": {
             "home": 1,
+            "away": 2
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Huddersfield",
+            "awayName": "Blackpool",
+            "startDateTimeUtc": "2026-02-07T15:01:00.000Z",
+            "eventId": "QeHHnyJ7"
+          },
+          "finalScore": {
+            "home": 2,
             "away": 2
           }
         }
@@ -425,6 +455,23 @@
             "away": 1
           }
         }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Colchester",
+            "awayName": "Shrewsbury",
+            "startDateTimeUtc": "2026-02-07T15:01:00.000Z",
+            "eventId": "niyTnMTk"
+          },
+          "finalScore": {
+            "home": 2,
+            "away": 0
+          }
+        }
       }
     ]
   },
@@ -566,6 +613,23 @@
           "finalScore": {
             "home": 2,
             "away": 2
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Away",
+          "match": {
+            "homeName": "Harrogate",
+            "awayName": "Cambridge Utd",
+            "startDateTimeUtc": "2026-02-07T15:01:00.000Z",
+            "eventId": "xpfCw06r"
+          },
+          "finalScore": {
+            "home": 2,
+            "away": 1
           }
         }
       }
@@ -711,6 +775,23 @@
             "away": 2
           }
         }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Hull",
+            "awayName": "Bristol City",
+            "startDateTimeUtc": "2026-02-07T15:01:00.000Z",
+            "eventId": "Wz7g9Xdk"
+          },
+          "finalScore": {
+            "home": 2,
+            "away": 3
+          }
+        }
       }
     ]
   },
@@ -839,7 +920,7 @@
         }
       },
       {
-        "outcome": "P",
+        "outcome": "L",
         "emoji": null,
         "prediction": {
           "type": "Home",
@@ -848,6 +929,27 @@
             "awayName": "Everton",
             "startDateTimeUtc": "2026-01-31T15:00:00.000Z",
             "eventId": "vPKFVEM6"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Away",
+          "match": {
+            "homeName": "Rotherham",
+            "awayName": "Cardiff",
+            "startDateTimeUtc": "2026-02-07T15:01:00.000Z",
+            "eventId": "fFBtLGY2"
+          },
+          "finalScore": {
+            "home": 0,
+            "away": 3
           }
         }
       }
