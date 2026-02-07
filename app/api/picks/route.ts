@@ -9,31 +9,62 @@ export async function GET() {
   const raw = fs.readFileSync(DATA_PATH, "utf-8");
   const users = JSON.parse(raw);
 
-  const leaderboard = users
-    .map(getStats)
-    .sort((a, b) => b.winPct - a.winPct);
+  const leaderboard = users.map(getStats).sort((a, b) => b.winPct - a.winPct);
 
   return NextResponse.json(leaderboard);
 }
 
-function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" | "P"; emoji: string | null, prediction: {
-          type: string,
-          match: {
-            homeName: string,
-            awayName: string,
-            startDateTimeUtc: string,
-            eventId: string
-          }
-        } }> }) {
-  const total = user.results.filter(r => r.outcome !== "P").length; // Exclude pending predictions
-  const wins = user.results.filter(r => r.outcome === "W").length;
+function getStats(user: {
+  username: string;
+  results: Array<{
+    outcome: "W" | "L" | "P";
+    emoji: string | null;
+    prediction: {
+      type: string;
+      match: {
+        homeName: string;
+        awayName: string;
+        startDateTimeUtc: string;
+        eventId: string;
+      };
+    };
+  }>;
+}) {
+  const total = user.results.filter((r) => r.outcome !== "P").length; // Exclude pending predictions
+  const wins = user.results.filter((r) => r.outcome === "W").length;
   const losses = total - wins;
   const winPct = total ? ((wins / total) * 100).toFixed(1) : "0.0";
-  const totalWithResults = user.results.filter(r => r.prediction != null).length;
-  const bttsPct = total ? ((user.results.filter(r => r.prediction?.type === "BTTS").length / totalWithResults) * 100).toFixed(1) : "0.0";
-  const homeWinPct = total ? ((user.results.filter(r => r.prediction?.type === "Home").length / totalWithResults) * 100).toFixed(1) : "0.0";
-  const awayWinPct = total ? ((user.results.filter(r => r.prediction?.type === "Away").length / totalWithResults) * 100).toFixed(1) : "0.0";
-  const o2GoalsPct = total ? ((user.results.filter(r => r.prediction?.type === "O2.5").length / totalWithResults) * 100).toFixed(1) : "0.0";
+  const totalWithResults = user.results.filter(
+    (r) => r.prediction != null,
+  ).length;
+  const bttsPct = total
+    ? (
+        (user.results.filter((r) => r.prediction?.type === "BTTS").length /
+          totalWithResults) *
+        100
+      ).toFixed(1)
+    : "0.0";
+  const homeWinPct = total
+    ? (
+        (user.results.filter((r) => r.prediction?.type === "Home").length /
+          totalWithResults) *
+        100
+      ).toFixed(1)
+    : "0.0";
+  const awayWinPct = total
+    ? (
+        (user.results.filter((r) => r.prediction?.type === "Away").length /
+          totalWithResults) *
+        100
+      ).toFixed(1)
+    : "0.0";
+  const o2GoalsPct = total
+    ? (
+        (user.results.filter((r) => r.prediction?.type === "O2.5").length /
+          totalWithResults) *
+        100
+      ).toFixed(1)
+    : "0.0";
 
   // Fine calculation: £5 per penalty emoji
   const finePattern = /(😴|🤢|🤣|🤦‍♂️|😡)/g;
@@ -49,11 +80,10 @@ function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" 
   // Calculate longest win streak
   let longestWinStreak = 0;
   let currentWinStreak = 0;
-  
+
   // Calculate longest loss streak
   let longestLossStreak = 0;
   let currentLossStreak = 0;
-  
 
   for (const result of user.results) {
     if (result.outcome === "W") {
@@ -68,18 +98,21 @@ function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" 
   }
 
   // Get last 5 results (excluding pending)
-  const settledResults = user.results.filter(r => r.outcome !== "P");
-  const last5 = settledResults.slice(-5).map(r => r.outcome).join("");
+  const settledResults = user.results.filter((r) => r.outcome !== "P");
+  const last5 = settledResults
+    .slice(-5)
+    .map((r) => r.outcome)
+    .join("");
   const form = last5 || "-";
 
   // Calculate current streak
   let currentStreak = 0;
   const lastResult = settledResults.at(-1);
-  
+
   if (lastResult) {
     const targetOutcome = lastResult.outcome;
     console.log("Last result:", targetOutcome);
-    
+
     for (let i = settledResults.length - 1; i >= 0; i--) {
       console.log("Next result", settledResults[i].outcome);
       if (settledResults[i].outcome === targetOutcome) {
@@ -89,16 +122,16 @@ function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" 
         break;
       }
     }
-    if (targetOutcome === "L"){
+    if (targetOutcome === "L") {
       currentStreak *= -1;
     }
   }
 
-  return { 
-    user: user.username, 
-    total, 
-    wins, 
-    losses, 
+  return {
+    user: user.username,
+    total,
+    wins,
+    losses,
     winPct,
     form,
     fineCount,
@@ -109,7 +142,7 @@ function getStats(user: { username: string; results: Array<{ outcome: "W" | "L" 
     bttsPct,
     homeWinPct,
     awayWinPct,
-    o2GoalsPct
+    o2GoalsPct,
   };
 }
 
@@ -140,17 +173,26 @@ export async function POST(req: Request) {
   }
 
   const baseEmoji = result === "W" ? "🔥" : "😡";
-  const emoji = currentStreak >= 6 ? baseEmoji + baseEmoji : currentStreak >= 2 ? baseEmoji : null;
+  const emoji =
+    currentStreak >= 6
+      ? baseEmoji + baseEmoji
+      : currentStreak >= 2
+        ? baseEmoji
+        : null;
 
   person.results.push({
     outcome: result,
-    emoji: emoji
+    emoji: emoji,
   });
 
   // Update emoji for previous results in the streak if we just hit 3 or 6
   if (currentStreak === 2 || currentStreak === 5) {
     const streakEmoji = currentStreak === 5 ? baseEmoji + baseEmoji : baseEmoji;
-    for (let i = person.results.length - (currentStreak === 2 ? 3 : 6); i < person.results.length; i++) {
+    for (
+      let i = person.results.length - (currentStreak === 2 ? 3 : 6);
+      i < person.results.length;
+      i++
+    ) {
       if (i >= 0 && person.results[i] && person.results[i].outcome === result) {
         person.results[i].emoji = streakEmoji;
       }
