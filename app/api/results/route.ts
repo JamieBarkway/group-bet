@@ -163,6 +163,9 @@ function recalcEmojis(
   results: Array<{ outcome: "W" | "L" | "P"; emoji: string | null }>,
   specialEmojis?: Record<number, string>,
 ) {
+  // Define special emojis that should be preserved (fine emojis)
+  const specialEmojiSet = new Set(["🤢", "🤣", "🤦‍♂️", "😴"]);
+
   // Recompute emojis for win/loss streaks; pending predictions get no emoji
   let runOutcome: "W" | "L" | null = null;
   let runLen = 0;
@@ -174,29 +177,32 @@ function recalcEmojis(
       runLen = 0;
       continue;
     }
-    // Preserve existing emoji (manually added or previously calculated)
-    if (r.emoji) {
-      // Keep the existing emoji and break the streak
-      runOutcome = null;
-      runLen = 0;
-      continue;
-    }
-    // Apply special emoji if it exists for this index
-    if (specialEmojis && specialEmojis[i]) {
-      r.emoji = specialEmojis[i];
-      // Special emoji breaks the streak
-      runOutcome = null;
-      runLen = 0;
-      continue;
-    }
+
+    // Calculate streak
     if (r.outcome === runOutcome) {
       runLen += 1;
     } else {
       runOutcome = r.outcome;
       runLen = 1;
     }
+
+    // Determine streak emoji - add one emoji for every 3 consecutive wins/losses
     const base = r.outcome === "W" ? "🔥" : "😡";
-    r.emoji = runLen >= 6 ? base + base : runLen >= 3 ? base : null;
+    const emojiCount = Math.floor(runLen / 3);
+    const streakEmoji = base.repeat(emojiCount);
+
+    // Check for special emoji
+    let specialEmoji = "";
+    if (specialEmojis && specialEmojis[i]) {
+      specialEmoji = specialEmojis[i];
+    } else if (r.emoji && specialEmojiSet.has(r.emoji)) {
+      // Preserve existing special emoji
+      specialEmoji = r.emoji;
+    }
+
+    // Combine special emoji and streak emoji
+    const combined = specialEmoji + streakEmoji;
+    r.emoji = combined || null;
   }
 }
 
@@ -234,92 +240,89 @@ export async function POST() {
       }
     }
 
-    if (pending.length === 0) {
-      return NextResponse.json({
-        settled: 0,
-        message: "No pending predictions",
-      });
-    }
-
-    const latestKickoff = new Date(
-      Math.max(...pending.map((p) => p.start.getTime())),
-    );
-    const now = new Date();
-    const twoHoursMs = 2 * 60 * 60 * 1000;
-    if (now.getTime() - latestKickoff.getTime() < twoHoursMs) {
-      return NextResponse.json({
-        settled: 0,
-        message: "Too early to settle; latest game not 2h old",
-      });
-    }
-
-    // Fetch all leagues results
-    const leaguePromises = LEAGUES.map((l) => {
-      return fetchLeagueResults(l.name, l.endpoint).catch(() => []);
-    });
-    const sets: any[][] = await Promise.all(leaguePromises);
-    const allResults: any[] = sets.flat();
-
-    // Build result map by eventId
-    const byId = new Map<
-      string,
-      { home: number | null; away: number | null }
-    >();
-    for (const r of allResults) {
-      const { home, away, eventId } = extractScores(r);
-      if (eventId) byId.set(String(eventId), { home, away });
-    }
-
-    // Settle each pending prediction
+    // Initialize variables for settlement and emoji tracking
     let settled = 0;
-    for (const p of pending) {
-      const scores = byId.get(String(p.eventId));
-      if (!scores) continue;
-      const outcome = decideWin(p.type, scores.home, scores.away);
-      if (!outcome) continue;
-      const target = users[p.userIndex].results[p.resultIndex];
-      target.outcome = outcome;
-      // attach final score info for UI details
-      if (target.prediction) {
-        target.prediction.finalScore = {
-          home: scores.home,
-          away: scores.away,
-        } as any;
-      }
-      settled += 1;
-    }
-
-    // Apply special emojis for specific loss conditions
     const specialEmojis: Record<number, Record<number, string>> = {}; // [userIndex][resultIndex] -> emoji
-    for (const p of pending) {
-      const target = users[p.userIndex].results[p.resultIndex];
-      if (target.outcome !== "L") continue; // Only for losses
 
-      const scores = byId.get(String(p.eventId));
-      if (!scores || scores.home === null || scores.away === null) continue;
-
-      // Check for 🤦‍♂️: BTTS/O2.5 picked but 0-0
-      if (
-        (p.type === "BTTS" || p.type === "O2.5") &&
-        scores.home === 0 &&
-        scores.away === 0
-      ) {
-        if (!specialEmojis[p.userIndex]) specialEmojis[p.userIndex] = {};
-        specialEmojis[p.userIndex][p.resultIndex] = "🤦‍♂️";
-        continue;
-      }
-
-      // Check for 🤣: Home/Away lost by 3+ goals
-      const goalDiff = Math.abs(scores.home - scores.away);
-      if ((p.type === "Home" || p.type === "Away") && goalDiff >= 3) {
-        if (!specialEmojis[p.userIndex]) specialEmojis[p.userIndex] = {};
-        specialEmojis[p.userIndex][p.resultIndex] = "🤣";
-        continue;
-      }
-    }
-
-    // Check for 🤢: only loser in the round
+    // Only attempt to settle if there are pending predictions
     if (pending.length > 0) {
+      const latestKickoff = new Date(
+        Math.max(...pending.map((p) => p.start.getTime())),
+      );
+      const now = new Date();
+      const twoHoursMs = 2 * 60 * 60 * 1000;
+      if (now.getTime() - latestKickoff.getTime() < twoHoursMs) {
+        return NextResponse.json({
+          settled: 0,
+          message: "Too early to settle; latest game not 2h old",
+        });
+      }
+
+      // Fetch all leagues results
+      const leaguePromises = LEAGUES.map((l) => {
+        return fetchLeagueResults(l.name, l.endpoint).catch(() => []);
+      });
+      const sets: any[][] = await Promise.all(leaguePromises);
+      const allResults: any[] = sets.flat();
+      console.log("Fetched results count:", allResults.length);
+      // Build result map by eventId
+      const byId = new Map<
+        string,
+        { home: number | null; away: number | null }
+      >();
+      for (const r of allResults) {
+        const { home, away, eventId } = extractScores(r);
+        if (eventId) byId.set(String(eventId), { home, away });
+      }
+
+      // Settle each pending prediction
+      for (const p of pending) {
+        const scores = byId.get(String(p.eventId));
+        console.log("scores", scores, "eventId", p.eventId);
+        if (!scores) continue;
+        const outcome = decideWin(p.type, scores.home, scores.away);
+        if (!outcome) continue;
+        const target = users[p.userIndex].results[p.resultIndex];
+        target.outcome = outcome;
+        // attach final score info for UI details
+        if (target.prediction) {
+          target.prediction.finalScore = {
+            home: scores.home,
+            away: scores.away,
+          } as any;
+        }
+        settled += 1;
+      }
+
+      // Apply special emojis for specific loss conditions
+      for (const p of pending) {
+        const target = users[p.userIndex].results[p.resultIndex];
+        if (target.outcome !== "L") continue; // Only for losses
+
+        const scores = byId.get(String(p.eventId));
+        if (!scores || scores.home === null || scores.away === null) continue;
+
+        // Check for 😴: BTTS/O2.5 picked but 0-0
+        if (
+          (p.type === "BTTS" || p.type === "O2.5") &&
+          scores.home === 0 &&
+          scores.away === 0
+        ) {
+          if (!specialEmojis[p.userIndex]) specialEmojis[p.userIndex] = {};
+          specialEmojis[p.userIndex][p.resultIndex] = "😴";
+          continue;
+        }
+
+        // Check for 🤣: Home/Away lost by 3+ goals
+        const goalDiff = Math.abs(scores.home - scores.away);
+        if ((p.type === "Home" || p.type === "Away") && goalDiff >= 3) {
+          if (!specialEmojis[p.userIndex]) specialEmojis[p.userIndex] = {};
+          specialEmojis[p.userIndex][p.resultIndex] = "🤣";
+          continue;
+        }
+      }
+
+      // Check for 🤢: only loser in the round
       const roundIndex = pending[0].resultIndex; // All pending should be same round
 
       // Check ALL users' results for this round (not just pending)
@@ -351,9 +354,16 @@ export async function POST() {
     // Persist results
     fs.writeFileSync(DATA_PATH, JSON.stringify(users, null, 2));
 
+    const message =
+      settled > 0
+        ? `Settled ${settled} predictions and recalculated emojis`
+        : pending.length === 0
+          ? "No pending predictions - recalculated emojis for all results"
+          : "Recalculated emojis";
+
     return NextResponse.json({
       settled,
-      message: `Settled ${settled} predictions`,
+      message,
     });
   } catch (error) {
     return NextResponse.json(

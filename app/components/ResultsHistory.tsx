@@ -680,19 +680,23 @@ export default function ResultsHistory({
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔥</span>
-                <span className="text-slate-200 text-sm">3-5 win streak</span>
+                <span className="text-slate-200 text-sm">3 win streak</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔥🔥</span>
-                <span className="text-slate-200 text-sm">6+ win streak</span>
+                <span className="text-slate-200 text-sm">6 win streak</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🔥🔥🔥</span>
+                <span className="text-slate-200 text-sm">
+                  9 win streak (adds 🔥 every 3 wins)
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-2xl">😡</span>
-                <span className="text-slate-200 text-sm">3-5 loss streak</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">😡😡</span>
-                <span className="text-slate-200 text-sm">6+ loss streak</span>
+                <span className="text-slate-200 text-sm">
+                  3+ loss streak (adds 😡 every 3 losses)
+                </span>
               </div>
             </div>
           </div>
