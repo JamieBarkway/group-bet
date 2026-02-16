@@ -141,7 +141,7 @@
         }
       },
       {
-        "outcome": "P",
+        "outcome": "L",
         "emoji": null,
         "prediction": {
           "type": "BTTS",
@@ -150,6 +150,27 @@
             "awayName": "West Ham",
             "startDateTimeUtc": "2026-02-07T15:00:00.000Z",
             "eventId": "UyEecLWo"
+          },
+          "finalScore": {
+            "home": 0,
+            "away": 2
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Cardiff",
+            "awayName": "Luton",
+            "startDateTimeUtc": "2026-02-14T15:00:00.000Z",
+            "eventId": "SS9lJf3F"
+          },
+          "finalScore": {
+            "home": 3,
+            "away": 1
           }
         }
       }
@@ -264,7 +285,7 @@
       },
       {
         "outcome": "W",
-        "emoji": null,
+        "emoji": "🔥🔥",
         "prediction": {
           "type": "Home",
           "match": {
@@ -281,7 +302,7 @@
       },
       {
         "outcome": "W",
-        "emoji": null,
+        "emoji": "🔥🔥🔥",
         "prediction": {
           "type": "BTTS",
           "match": {
@@ -310,6 +331,23 @@
           "finalScore": {
             "home": 2,
             "away": 2
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Blackpool",
+            "awayName": "Plymouth",
+            "startDateTimeUtc": "2026-02-14T15:00:00.000Z",
+            "eventId": "nq9tCinJ"
+          },
+          "finalScore": {
+            "home": 0,
+            "away": 4
           }
         }
       }
@@ -388,7 +426,7 @@
       },
       {
         "outcome": "L",
-        "emoji": "😡🤦‍♂️"
+        "emoji": "😡"
       },
       {
         "outcome": "W",
@@ -458,7 +496,7 @@
       },
       {
         "outcome": "W",
-        "emoji": null,
+        "emoji": "🔥",
         "prediction": {
           "type": "Home",
           "match": {
@@ -470,6 +508,23 @@
           "finalScore": {
             "home": 2,
             "away": 0
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "QPR",
+            "awayName": "Blackburn",
+            "startDateTimeUtc": "2026-02-14T15:00:00.000Z",
+            "eventId": "6oNoz115"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 3
           }
         }
       }
@@ -520,10 +575,6 @@
       },
       {
         "outcome": "L",
-        "emoji": "😡🤣"
-      },
-      {
-        "outcome": "L",
         "emoji": "😡"
       },
       {
@@ -532,7 +583,11 @@
       },
       {
         "outcome": "L",
-        "emoji": "😡😡🤦‍♂️"
+        "emoji": "😡"
+      },
+      {
+        "outcome": "L",
+        "emoji": "😡😡"
       },
       {
         "outcome": "W",
@@ -630,6 +685,23 @@
           "finalScore": {
             "home": 2,
             "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "MK Dons",
+            "awayName": "Newport",
+            "startDateTimeUtc": "2026-02-14T15:00:00.000Z",
+            "eventId": "4fnalLEN"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 0
           }
         }
       }
@@ -792,6 +864,23 @@
             "away": 3
           }
         }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Norwich",
+            "awayName": "West Brom",
+            "startDateTimeUtc": "2026-02-14T15:00:00.000Z",
+            "eventId": "zZxWMrIc"
+          },
+          "finalScore": {
+            "home": 3,
+            "away": 1
+          }
+        }
       }
     ]
   },
@@ -950,6 +1039,23 @@
           "finalScore": {
             "home": 0,
             "away": 3
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Southampton",
+            "awayName": "Leicester",
+            "startDateTimeUtc": "2026-02-14T15:00:00.000Z",
+            "eventId": "j97fFiGl"
+          },
+          "finalScore": {
+            "home": 2,
+            "away": 1
           }
         }
       }
