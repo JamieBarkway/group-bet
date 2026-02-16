@@ -1043,7 +1043,7 @@
         }
       },
       {
-        "outcome": "W",
+        "outcome": "L",
         "emoji": null,
         "prediction": {
           "type": "Home",
@@ -1054,7 +1054,7 @@
             "eventId": "j97fFiGl"
           },
           "finalScore": {
-            "home": 2,
+            "home": 1,
             "away": 1
           }
         }

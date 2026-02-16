@@ -109,12 +109,7 @@ function extractScores(result: any): {
   eventId?: string;
 } {
   // Try common fields
-  const fields = [
-    ["homeScoreFt", "awayScoreFt"],
-    ["homeScore", "awayScore"],
-    ["home_score", "away_score"],
-    ["home", "away"],
-  ];
+  const fields = [["homeFullTimeScore", "awayFullTimeScore"]];
   let home: number | null = null;
   let away: number | null = null;
   for (const [h, a] of fields) {
