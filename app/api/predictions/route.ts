@@ -146,7 +146,46 @@ export async function POST(req: Request) {
         }
       });
 
-      allPicksMessage += `Good luck everyone! 🍀`;
+      // Calculate streaks and fine risks
+      const streakSummary: any[] = [];
+      users.forEach((u: any) => {
+        // Get only non-pending results (completed outcomes)
+        const completedResults = u.results.filter(
+          (r: any) => r.outcome === "W" || r.outcome === "L",
+        );
+
+        if (completedResults.length > 0) {
+          // Find current streak from the end
+          let currentStreak = 1;
+          let currentType =
+            completedResults[completedResults.length - 1].outcome;
+
+          for (
+            let i = completedResults.length - 2;
+            i >= 0 && completedResults[i].outcome === currentType;
+            i--
+          ) {
+            currentStreak++;
+          }
+
+          // Check for loss streaks that put player at risk
+          if (currentType === "L" && currentStreak >= 2) {
+            const fineRisk =
+              currentStreak === 2 ? "£5" : `£${currentStreak * 5}`;
+            streakSummary.push(
+              `⚠️ <b>${u.username}</b> is on ${currentStreak} losses in a row - risk of ${fineRisk} fine if he loses this week`,
+            );
+          }
+        }
+      });
+
+      // Add streak summary if there are any at-risk players
+      if (streakSummary.length > 0) {
+        allPicksMessage += `\n\n📊 <b>Streak Alert:</b>\n`;
+        allPicksMessage += streakSummary.join("\n");
+      }
+
+      allPicksMessage += `\n\nGood luck everyone! 🍀`;
 
       await sendTelegramNotification(allPicksMessage);
     }
