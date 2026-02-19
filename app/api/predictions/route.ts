@@ -254,6 +254,7 @@ export async function DELETE(req: Request) {
       `🦥 <b>${username}</b> slow to bet, fast to bail.`,
       `🐀 <b>${username}</b> squeaked and bolted.`,
       `🩸 <b>${username}</b> aborted mission… tragic.`,
+      `💨 <b>${username}</b> has a twitchy arse. Make up your mind`,
     ];
 
     const randomMessage =
