@@ -2,6 +2,35 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
+// Telegram notification helper (copied from predictions/route.ts)
+async function sendTelegramNotification(message: string) {
+  const token = "7771975489:AAGVi4mSjqBXccJvUmJi0CYfhuM1wrwQK74";
+  const chatId = "-5098513631";
+  if (!token || !chatId) {
+    console.log("Telegram not configured, skipping notification");
+    return;
+  }
+  try {
+    const response = await fetch(
+      `https://api.telegram.org/bot${token}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: "HTML",
+        }),
+      },
+    );
+    if (!response.ok) {
+      console.error("Telegram notification failed:", await response.text());
+    }
+  } catch (error) {
+    console.error("Telegram notification error:", error);
+  }
+}
+
 const API_KEY = "wduFiC24P0EzR2GYJvaMONjPE7ECHKHexnhcoHHs";
 
 // In-memory cache for results
@@ -348,6 +377,41 @@ export async function POST() {
 
     // Persist results
     fs.writeFileSync(DATA_PATH, JSON.stringify(users, null, 2));
+
+    // --- NEW: Send Telegram summary if all picks for the round are now settled ---
+    // Only send if we just settled picks (not just recalculated)
+    if (settled > 0 && pending.length > 0) {
+      // All picks for this round should now be W/L (no P) for this round
+      const roundIndex = pending[0].resultIndex;
+      const allSettled = users.every(
+        (u) =>
+          u.results[roundIndex] &&
+          (u.results[roundIndex].outcome === "W" ||
+            u.results[roundIndex].outcome === "L"),
+      );
+      if (allSettled) {
+        // Build summary message
+        let summary = `📊 <b>Round ${roundIndex + 1} Results</b>\n\n`;
+        users.forEach((u) => {
+          const r = u.results[roundIndex];
+          if (!r || !r.prediction) return;
+          const pickType =
+            r.prediction.type === "BTTS"
+              ? "Both Teams To Score"
+              : r.prediction.type === "O2.5"
+                ? "Over 2.5 Goals"
+                : `${r.prediction.type} Win`;
+          const match = r.prediction.match;
+          const score = r.prediction.finalScore
+            ? ` (${r.prediction.finalScore.home}-${r.prediction.finalScore.away})`
+            : "";
+          const outcome = r.outcome === "W" ? "✅ Win" : "❌ Loss";
+          summary += `<b>${u.username}</b>: ${pickType} - <i>${match.homeName} vs ${match.awayName}${score}</i>\n${outcome}\n\n`;
+        });
+        summary += `Well played! 🏁`;
+        await sendTelegramNotification(summary);
+      }
+    }
 
     const message =
       settled > 0
