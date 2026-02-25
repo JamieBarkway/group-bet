@@ -62,6 +62,36 @@ export default function Leaderboard({
     return "bg-red-600";
   };
 
+  const getAvgOddsColor = (avgOdds: string) => {
+    const odds = parseFloat(avgOdds);
+    if (odds === 0) return "bg-slate-600"; // No data
+    // Range: 1.70 (lowest) to 1.91 (highest)
+    // Higher odds = better (more value)
+    if (odds >= 1.88) return "bg-green-600";
+    if (odds >= 1.85) return "bg-green-500";
+    if (odds >= 1.82) return "bg-lime-500";
+    if (odds >= 1.80) return "bg-yellow-500";
+    if (odds >= 1.77) return "bg-amber-500";
+    if (odds >= 1.74) return "bg-orange-500";
+    if (odds >= 1.71) return "bg-orange-600";
+    return "bg-red-600";
+  };
+
+  const getAvgWinningOddsColor = (avgWinningOdds: string) => {
+    const odds = parseFloat(avgWinningOdds);
+    if (odds === 0) return "bg-slate-600"; // No data
+    // Range: 1.65 (lowest) to 1.95 (highest)
+    // Higher odds = better (winning with riskier bets)
+    if (odds >= 1.90) return "bg-green-600";
+    if (odds >= 1.85) return "bg-green-500";
+    if (odds >= 1.80) return "bg-lime-500";
+    if (odds >= 1.77) return "bg-yellow-500";
+    if (odds >= 1.74) return "bg-amber-500";
+    if (odds >= 1.70) return "bg-orange-500";
+    if (odds >= 1.67) return "bg-orange-600";
+    return "bg-red-600";
+  };
+
   const handleSort = (column: SortColumn) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -376,13 +406,13 @@ export default function Leaderboard({
                     {u.losses}
                   </td>
                   <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-center">
-                    <span className="inline-flex items-center gap-1 bg-teal-600 text-white px-1.5 md:px-2.5 py-1 rounded text-xs font-semibold border border-teal-400">
+                    <span className={`inline-flex items-center gap-1 ${getAvgOddsColor(u.avgOdds)} text-white px-1.5 md:px-2.5 py-1 rounded text-xs font-semibold`}>
                       <span>💰</span>
                       <span>{u.avgOdds}</span>
                     </span>
                   </td>
                   <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-center">
-                    <span className="inline-flex items-center gap-1 bg-emerald-600 text-white px-1.5 md:px-2.5 py-1 rounded text-xs font-semibold border border-emerald-400">
+                    <span className={`inline-flex items-center gap-1 ${getAvgWinningOddsColor(u.avgWinningOdds)} text-white px-1.5 md:px-2.5 py-1 rounded text-xs font-semibold`}>
                       <span>🏆</span>
                       <span>{u.avgWinningOdds}</span>
                     </span>
