@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import OddsModal from "./OddsModal";
 
 type PlayerResults = {
   username: string;
@@ -49,6 +50,7 @@ export default function ResultsHistory({
     finalScore?: { home: number | null; away: number | null };
   } | null>(null);
   const [fetchingScore, setFetchingScore] = useState(false);
+  const [oddsModalRound, setOddsModalRound] = useState<number | null>(null);
 
   const handleRemovePrediction = async (
     username: string,
@@ -540,6 +542,18 @@ export default function ResultsHistory({
                       : "text-slate-200"
                   }`}
                 >
+                  <div className="flex flex-col items-center gap-1">
+                    <span>{i + 1}</span>
+                    {selectedPlayer === "The Real Barky" && i < maxResults && (
+                      <button
+                        onClick={() => setOddsModalRound(i + 1)}
+                        className="px-2 py-0.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] rounded transition-colors"
+                        title="Enter odds for this round"
+                      >
+                        💰
+                      </button>
+                    )}
+                  </div>
                   {i + 1}
                 </th>
               ))}
@@ -1001,6 +1015,13 @@ export default function ResultsHistory({
           </button>
         </div>
       )}
+
+      {/* Odds Modal */}
+      <OddsModal
+        isOpen={oddsModalRound !== null}
+        onClose={() => setOddsModalRound(null)}
+        roundNumber={oddsModalRound || 1}
+      />
     </div>
   );
 }

@@ -4,12 +4,37 @@ import { NextResponse } from "next/server";
 
 const DATA_PATH = path.join(process.cwd(), "app/data", "picks.json");
 
+type LeaderboardStats = {
+  user: string;
+  total: number;
+  wins: number;
+  losses: number;
+  winPct: string;
+  form: string;
+  fineCount: number;
+  fineTotal: number;
+  currentStreak: number;
+  longestWinStreak: number;
+  longestLossStreak: number;
+  bttsPct: string;
+  homeWinPct: string;
+  awayWinPct: string;
+  o2GoalsPct: string;
+  avgOdds: string;
+  avgWinningOdds: string;
+};
+
 /* GET → return leaderboard */
 export async function GET() {
   const raw = fs.readFileSync(DATA_PATH, "utf-8");
   const users = JSON.parse(raw);
 
-  const leaderboard = users.map(getStats).sort((a, b) => b.winPct - a.winPct);
+  const leaderboard = users
+    .map(getStats)
+    .sort(
+      (a: LeaderboardStats, b: LeaderboardStats) =>
+        parseFloat(b.winPct) - parseFloat(a.winPct),
+    );
 
   return NextResponse.json(leaderboard);
 }
@@ -19,7 +44,7 @@ function getStats(user: {
   results: Array<{
     outcome: "W" | "L" | "P";
     emoji: string | null;
-    prediction: {
+    prediction?: {
       type: string;
       match: {
         homeName: string;
@@ -27,9 +52,14 @@ function getStats(user: {
         startDateTimeUtc: string;
         eventId: string;
       };
+      finalScore?: {
+        home: number;
+        away: number;
+      };
+      odds?: number;
     };
   }>;
-}) {
+}): LeaderboardStats {
   const total = user.results.filter((r) => r.outcome !== "P").length; // Exclude pending predictions
   const wins = user.results.filter((r) => r.outcome === "W").length;
   const losses = total - wins;
@@ -127,6 +157,34 @@ function getStats(user: {
     }
   }
 
+  // Calculate average odds for completed predictions with odds
+  const resultsWithOdds = user.results.filter(
+    (r) => r.prediction?.odds && (r.outcome === "W" || r.outcome === "L"),
+  );
+  const avgOdds =
+    resultsWithOdds.length > 0
+      ? (
+          resultsWithOdds.reduce(
+            (sum, r) => sum + (r.prediction?.odds || 0),
+            0,
+          ) / resultsWithOdds.length
+        ).toFixed(2)
+      : "0.00";
+
+  // Calculate average odds for winning predictions only
+  const winningResultsWithOdds = user.results.filter(
+    (r) => r.prediction?.odds && r.outcome === "W",
+  );
+  const avgWinningOdds =
+    winningResultsWithOdds.length > 0
+      ? (
+          winningResultsWithOdds.reduce(
+            (sum, r) => sum + (r.prediction?.odds || 0),
+            0,
+          ) / winningResultsWithOdds.length
+        ).toFixed(2)
+      : "0.00";
+
   return {
     user: user.username,
     total,
@@ -143,6 +201,8 @@ function getStats(user: {
     homeWinPct,
     awayWinPct,
     o2GoalsPct,
+    avgOdds,
+    avgWinningOdds,
   };
 }
 
@@ -157,7 +217,9 @@ export async function POST(req: Request) {
   const raw = fs.readFileSync(DATA_PATH, "utf-8");
   const users = JSON.parse(raw);
 
-  const person = users.find((u: any) => u.username === username);
+  const person = users.find(
+    (u: { username: string }) => u.username === username,
+  );
   if (!person) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
