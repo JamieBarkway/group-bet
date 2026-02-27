@@ -390,7 +390,7 @@ export async function POST() {
             u.results[roundIndex].outcome === "L"),
       );
       if (allSettled) {
-        // Build summary message
+        // Build summary message with emoji explanations
         let summary = `📊 <b>Round ${roundIndex + 1} Results</b>\n\n`;
         users.forEach((u) => {
           const r = u.results[roundIndex];
@@ -406,9 +406,38 @@ export async function POST() {
             ? ` (${r.prediction.finalScore.home}-${r.prediction.finalScore.away})`
             : "";
           const outcome = r.outcome === "W" ? "✅ Win" : "❌ Loss";
-          summary += `<b>${u.username}</b>: ${pickType} - <i>${match.homeName} vs ${match.awayName}${score}</i>\n${outcome}\n\n`;
+          summary += `<b>${u.username}</b>: ${pickType} - <i>${match.homeName} vs ${match.awayName}${score}</i>\n${outcome}`;
+
+          // Add emoji explanations for this round
+          const emoji = r.emoji;
+          if (emoji) {
+            // Fire streaks (🔥)
+            if (emoji.includes("🔥")) {
+              const streak = emoji.split("").filter((e) => e === "🔥").length;
+              if (streak > 0) {
+                summary += `\n<b>${u.username}</b> is on fire, ${streak * 3} wins in a row! 🔥`;
+              }
+            }
+            // Angry streaks (😡)
+            if (emoji.includes("😡")) {
+              const streak = emoji.split("").filter((e) => e === "😡").length;
+              if (streak > 0) {
+                summary += `\n<b>${u.username}</b> is on a losing streak, ${streak * 3} losses in a row. 😡`;
+              }
+            }
+            // Fine/special emojis
+            if (emoji.includes("🤢")) {
+              summary += `\n<b>£5 fine:</b> ${u.username} was the only loser this round! 🤢`;
+            }
+            if (emoji.includes("🤣")) {
+              summary += `\n<b>£5 fine:</b> ${u.username} lost by 3+ goals! 🤣`;
+            }
+            if (emoji.includes("😴")) {
+              summary += `\n<b>£5 fine:</b> ${u.username} picked BTTS/O2.5 and got a 0-0! 😴`;
+            }
+          }
+          summary += "\n\n";
         });
-        summary += `Well played! 🏁`;
         await sendTelegramNotification(summary);
       }
     }
