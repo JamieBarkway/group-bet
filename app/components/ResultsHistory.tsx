@@ -544,15 +544,28 @@ export default function ResultsHistory({
                 >
                   <div className="flex flex-col items-center gap-1">
                     <span>{i + 1}</span>
-                    {selectedPlayer === "The Real Barky" && i < maxResults && (
-                      <button
-                        onClick={() => setOddsModalRound(i + 1)}
-                        className="px-2 py-0.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] rounded transition-colors"
-                        title="Enter odds for this round"
-                      >
-                        💰
-                      </button>
-                    )}
+                    {selectedPlayer === "The Real Barky" &&
+                      (() => {
+                        // Only show odds button if all users have a prediction for this round (P, W, or L)
+                        const allHavePick = players.every(
+                          (player) =>
+                            player.results[i] &&
+                            player.results[i].prediction &&
+                            ["P", "W", "L"].includes(player.results[i].outcome),
+                        );
+                        if (allHavePick) {
+                          return (
+                            <button
+                              onClick={() => setOddsModalRound(i + 1)}
+                              className="px-2 py-0.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] rounded transition-colors"
+                              title="Enter odds for this round"
+                            >
+                              💰
+                            </button>
+                          );
+                        }
+                        return null;
+                      })()}
                   </div>
                   {i + 1}
                 </th>

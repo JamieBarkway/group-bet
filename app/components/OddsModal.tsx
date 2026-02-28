@@ -131,6 +131,7 @@ export default function OddsModal({
   if (!isOpen) return null;
 
   // Get predictions for the specific round
+  // Allow odds entry as soon as all picks are submitted (outcome P, W, or L)
   const roundPredictions = users
     .map((user) => ({
       user,
@@ -139,9 +140,7 @@ export default function OddsModal({
     }))
     .filter(
       ({ result }) =>
-        result &&
-        result.prediction &&
-        (result.outcome === "W" || result.outcome === "L"),
+        result && result.prediction && ["P", "W", "L"].includes(result.outcome),
     );
 
   return (
