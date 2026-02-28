@@ -170,8 +170,12 @@ export async function POST(req: Request) {
 
           // Check for loss streaks that put player at risk
           if (currentType === "L" && currentStreak >= 2) {
-            const fineRisk =
-              currentStreak === 2 ? "£5" : `£${currentStreak * 5}`;
+            let fineRisk = "£5";
+            if (currentStreak >= 6) {
+              fineRisk = "£10";
+            } else if (currentStreak >= 3) {
+              fineRisk = "£5";
+            }
             streakSummary.push(
               `⚠️ <b>${u.username}</b> is on ${currentStreak} losses in a row - risk of ${fineRisk} fine if he loses this week`,
             );

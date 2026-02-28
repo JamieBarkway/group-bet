@@ -411,29 +411,74 @@ export async function POST() {
           // Add emoji explanations for this round
           const emoji = r.emoji;
           if (emoji) {
-            // Fire streaks (🔥)
-            if (emoji.includes("🔥")) {
-              const streak = emoji.split("").filter((e) => e === "🔥").length;
-              if (streak > 0) {
-                summary += `\n<b>${u.username}</b> is on fire, ${streak * 3} wins in a row! 🔥`;
+            // Calculate actual win/loss streak for this user up to and including this round
+            const results = u.results;
+            let streakCount = 1;
+            let idx = roundIndex;
+            const thisOutcome = r.outcome;
+            // Go backwards from this round
+            for (let i = idx - 1; i >= 0; i--) {
+              if (results[i] && results[i].outcome === thisOutcome) {
+                streakCount++;
+              } else {
+                break;
               }
             }
-            // Angry streaks (😡)
-            if (emoji.includes("😡")) {
-              const streak = emoji.split("").filter((e) => e === "😡").length;
-              if (streak > 0) {
-                summary += `\n<b>${u.username}</b> is on a losing streak, ${streak * 3} losses in a row. 😡`;
+
+            // Calculate fine for losing streak
+            let streakFine = 0;
+            if (r.outcome === "L" && emoji.includes("😡")) {
+              if (streakCount >= 9) {
+                streakFine = 15;
+              } else if (streakCount >= 6) {
+                streakFine = 10;
+              } else if (streakCount >= 3) {
+                streakFine = 5;
               }
             }
-            // Fine/special emojis
+
+            // Count special fine emojis
+            let specialFine = 0;
+            const specialEmojisList = [];
             if (emoji.includes("🤢")) {
-              summary += `\n<b>£5 fine:</b> ${u.username} was the only loser this round! 🤢`;
+              specialFine += 5;
+              specialEmojisList.push(
+                `${u.username} was the only loser this round! 🤢`,
+              );
             }
             if (emoji.includes("🤣")) {
-              summary += `\n<b>£5 fine:</b> ${u.username} lost by 3+ goals! 🤣`;
+              specialFine += 5;
+              specialEmojisList.push(`${u.username} lost by 3+ goals! 🤣`);
             }
             if (emoji.includes("😴")) {
-              summary += `\n<b>£5 fine:</b> ${u.username} picked BTTS/O2.5 and got a 0-0! 😴`;
+              specialFine += 5;
+              specialEmojisList.push(
+                `${u.username} picked BTTS/O2.5 and got a 0-0! 😴`,
+              );
+            }
+
+            // Fire streaks (🔥)
+            if (emoji.includes("🔥") && r.outcome === "W") {
+              summary += `\n<b>${u.username}</b> is on fire, ${streakCount} wins in a row! 🔥`;
+            }
+
+            // Angry streaks (😡) with correct fine
+            if (emoji.includes("😡") && r.outcome === "L") {
+              if (streakFine > 0) {
+                summary += `\n<b>£${streakFine} fine: ${u.username}</b> is on a losing streak, ${streakCount} losses in a row. 😡`;
+              } else {
+                summary += `\n<b>${u.username}</b> is on a losing streak, ${streakCount} losses in a row. 😡`;
+              }
+            }
+
+            // If there are special fine reasons, show total fine for them
+            if (specialFine > 0) {
+              summary += `\n<b>£${specialFine} fine:</b> ${specialEmojisList.join(" ")}`;
+            }
+
+            // If both streak and special fines apply, show total fine
+            if (streakFine > 0 && specialFine > 0) {
+              summary += `\n<b>Total fine for ${u.username}: £${streakFine + specialFine}</b>`;
             }
           }
           summary += "\n\n";
