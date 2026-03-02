@@ -13,6 +13,8 @@ type PlayerResults = {
       match: {
         homeName: string;
         awayName: string;
+        homeLogo?: string;
+        awayLogo?: string;
         startDateTimeUtc: string;
         eventId: string;
       };
@@ -883,13 +885,38 @@ export default function ResultsHistory({
                         <span className="font-bold text-white text-lg">
                           {item.username}
                         </span>
-                        <span className="px-3 py-1 bg-purple-600 text-white text-xs font-bold rounded-full">
-                          {item.prediction?.prediction?.type}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {item.prediction?.prediction?.type === "Home" &&
+                            item.prediction?.prediction?.match?.homeLogo && (
+                              <img
+                                src={item.prediction.prediction.match.homeLogo}
+                                alt=""
+                                className="w-5 h-5 object-contain"
+                              />
+                            )}
+                          {item.prediction?.prediction?.type === "Away" &&
+                            item.prediction?.prediction?.match?.awayLogo && (
+                              <img
+                                src={item.prediction.prediction.match.awayLogo}
+                                alt=""
+                                className="w-5 h-5 object-contain"
+                              />
+                            )}
+                          <span className="px-3 py-1 bg-purple-600 text-white text-xs font-bold rounded-full">
+                            {item.prediction?.prediction?.type}
+                          </span>
+                        </div>
                       </div>
                       {item.prediction?.prediction?.match && (
                         <div className="text-sm text-slate-300">
                           <div className="flex items-center gap-2 mb-1">
+                            {item.prediction.prediction.match.homeLogo && (
+                              <img
+                                src={item.prediction.prediction.match.homeLogo}
+                                alt=""
+                                className="w-4 h-4 object-contain"
+                              />
+                            )}
                             <span className="font-semibold">
                               {item.prediction.prediction.match.homeName}
                             </span>
@@ -897,6 +924,13 @@ export default function ResultsHistory({
                             <span className="font-semibold">
                               {item.prediction.prediction.match.awayName}
                             </span>
+                            {item.prediction.prediction.match.awayLogo && (
+                              <img
+                                src={item.prediction.prediction.match.awayLogo}
+                                alt=""
+                                className="w-4 h-4 object-contain"
+                              />
+                            )}
                           </div>
                           <div className="text-xs text-slate-400">
                             {new Date(
@@ -1011,21 +1045,6 @@ export default function ResultsHistory({
               )}
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Manual Settle Button - Only for The Real Barky */}
-      {selectedPlayer === "The Real Barky" && (
-        <div className="mt-8 flex justify-center">
-          <button
-            onClick={handleManualSettle}
-            disabled={manualSettling}
-            className="px-6 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {manualSettling
-              ? "Updating Results..."
-              : "⚡ Manual Settle Results"}
-          </button>
         </div>
       )}
 

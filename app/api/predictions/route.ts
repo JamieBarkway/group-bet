@@ -98,6 +98,8 @@ export async function POST(req: Request) {
         match: {
           homeName: match.homeName,
           awayName: match.awayName,
+          homeLogo: match.homeLogo || null,
+          awayLogo: match.awayLogo || null,
           startDateTimeUtc: match.startDateTimeUtc,
           eventId: match.eventId,
         },
