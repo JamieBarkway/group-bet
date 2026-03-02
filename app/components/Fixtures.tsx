@@ -18,7 +18,6 @@ export default function WeekendFixtures({
   const [activeTab, setActiveTab] = useState<"midweek" | "weekend">("weekend");
   const [submitting, setSubmitting] = useState(false);
   const [hasPendingPrediction, setHasPendingPrediction] = useState(false);
-  const [allPicksSettled, setAllPicksSettled] = useState(true);
   const [takenBy, setTakenBy] = useState<
     Record<string, { username: string; type: PredictionType }>
   >({}); // eventId -> {username, type}
@@ -46,12 +45,6 @@ export default function WeekendFixtures({
           }
         });
         setTakenBy(taken);
-
-        // Check if all picks are settled (no pending predictions for any user)
-        const anyPending = data.some((p: any) =>
-          p.results.some((r: any) => r.outcome === "P"),
-        );
-        setAllPicksSettled(!anyPending);
 
         if (selectedPlayer) {
           const player = data.find((p: any) => p.username === selectedPlayer);
@@ -188,15 +181,6 @@ export default function WeekendFixtures({
     return (
       <div className="flex items-center justify-center p-8">
         <p className="text-xl text-red-400">Error: {error}</p>
-      </div>
-    );
-
-  if (!allPicksSettled)
-    return (
-      <div className="flex items-center justify-center p-8">
-        <p className="text-xl text-slate-300">
-          Waiting for all picks to be settled…
-        </p>
       </div>
     );
 

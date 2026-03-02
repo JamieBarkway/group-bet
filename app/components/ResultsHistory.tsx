@@ -38,7 +38,6 @@ export default function ResultsHistory({
     placedBy: string;
   } | null>(null);
   const [markingBet, setMarkingBet] = useState(false);
-  const [manualSettling, setManualSettling] = useState(false);
   const [resultDetail, setResultDetail] = useState<{
     username: string;
     outcome: "W" | "L";
@@ -114,36 +113,6 @@ export default function ResultsHistory({
       );
     } finally {
       setMarkingBet(false);
-    }
-  };
-
-  const handleManualSettle = async () => {
-    if (
-      !confirm("Are you sure you want to manually settle all pending results?")
-    )
-      return;
-
-    setManualSettling(true);
-    try {
-      console.log("Manually settling results...");
-      const res = await fetch("/api/results", { method: "POST" });
-
-      if (!res.ok) {
-        throw new Error("Failed to settle results");
-      }
-
-      console.log("Results settled successfully");
-      // Refresh players data
-      const raw = await fetch("/api/picks/raw");
-      const data = await raw.json();
-      setPlayers(data);
-
-      alert("Results updated successfully!");
-    } catch (err) {
-      console.error("Error settling results:", err);
-      alert(err instanceof Error ? err.message : "Failed to settle results");
-    } finally {
-      setManualSettling(false);
     }
   };
 
