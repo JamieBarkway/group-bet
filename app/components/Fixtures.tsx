@@ -102,12 +102,17 @@ export default function WeekendFixtures({
         throw new Error(body.error || "Failed to submit prediction");
       }
 
-      alert(
-        `Prediction submitted: ${type} for ${match.homeName} vs ${match.awayName}`,
-      );
-
-      // Reload the page to refresh results
-      window.location.reload();
+      // Play honk.mp3 sound (client only)
+      if (typeof window !== "undefined") {
+        const audio = new window.Audio("/honk.mp3"); // public folder
+        audio.play();
+        // Wait for sound to play before reload
+        setTimeout(() => {
+          window.location.reload();
+        }, 2300); // adjust duration as needed
+      } else {
+        window.location.reload();
+      }
     } catch (err) {
       alert(err instanceof Error ? err.message : "Failed to submit prediction");
     } finally {
