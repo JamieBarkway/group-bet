@@ -346,26 +346,33 @@ export async function POST() {
         }
       }
 
-      // Check for 🤢: only loser in the round
+      // Check for 🤢: only loser in the round (only if ALL picks are settled)
       const roundIndex = pending[0].resultIndex; // All pending should be same round
 
       // Check ALL users' results for this round (not just pending)
-      const allResultsInRound = users
-        .map((u, userIndex) => ({
-          userIndex,
-          outcome: u.results[roundIndex]?.outcome,
-        }))
-        .filter((r) => r.outcome === "W" || r.outcome === "L");
+      const allResultsInRound = users.map((u, userIndex) => ({
+        userIndex,
+        outcome: u.results[roundIndex]?.outcome,
+      }));
 
-      const losersInRound = allResultsInRound.filter((r) => r.outcome === "L");
+      // Only assign 🤢 if every user's pick in this round is settled (no pending "P")
+      const allSettledInRound = allResultsInRound.every(
+        (r) => r.outcome === "W" || r.outcome === "L",
+      );
 
-      if (losersInRound.length === 1) {
-        const loserUserIndex = losersInRound[0].userIndex;
-        // Only add 🤢 if they don't already have a special emoji
-        if (!specialEmojis[loserUserIndex]?.[roundIndex]) {
-          if (!specialEmojis[loserUserIndex])
-            specialEmojis[loserUserIndex] = {};
-          specialEmojis[loserUserIndex][roundIndex] = "🤢";
+      if (allSettledInRound) {
+        const losersInRound = allResultsInRound.filter(
+          (r) => r.outcome === "L",
+        );
+
+        if (losersInRound.length === 1) {
+          const loserUserIndex = losersInRound[0].userIndex;
+          // Only add 🤢 if they don't already have a special emoji
+          if (!specialEmojis[loserUserIndex]?.[roundIndex]) {
+            if (!specialEmojis[loserUserIndex])
+              specialEmojis[loserUserIndex] = {};
+            specialEmojis[loserUserIndex][roundIndex] = "🤢";
+          }
         }
       }
     }
