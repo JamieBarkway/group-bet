@@ -120,7 +120,8 @@
           "finalScore": {
             "home": 1,
             "away": 0
-          }
+          },
+          "odds": 1.72
         }
       },
       {
@@ -137,7 +138,8 @@
           "finalScore": {
             "home": 2,
             "away": 1
-          }
+          },
+          "odds": 1.67
         }
       },
       {
@@ -154,7 +156,8 @@
           "finalScore": {
             "home": 0,
             "away": 2
-          }
+          },
+          "odds": 1.7
         }
       },
       {
@@ -171,6 +174,123 @@
           "finalScore": {
             "home": 3,
             "away": 1
+          },
+          "odds": 1.79
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Luton",
+            "awayName": "Burton",
+            "startDateTimeUtc": "2026-02-21T15:00:00.000Z",
+            "eventId": "zoaCrpve"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 1
+          },
+          "odds": 1.85
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "QPR",
+            "awayName": "Sheffield Utd",
+            "startDateTimeUtc": "2026-02-28T15:00:00.000Z",
+            "eventId": "GfaPTJuP"
+          },
+          "odds": 1.72,
+          "finalScore": {
+            "home": 0,
+            "away": 2
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": "😡",
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Barnsley",
+            "awayName": "Wycombe",
+            "homeLogo": "https://static.flashscore.com/res/image/data/xbz5uXhT-WdTjExSq.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/hKlkKIUH-bgElVuX9.png",
+            "startDateTimeUtc": "2026-03-03T19:45:00.000Z",
+            "eventId": "IXzaZBQ0"
+          },
+          "odds": 1.57,
+          "finalScore": {
+            "home": 0,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Wrexham",
+            "awayName": "Chelsea",
+            "homeLogo": "https://static.flashscore.com/res/image/data/bHt6w87k-OxoAKHbA.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/lMxEQ8me-IROrZEJb.png",
+            "startDateTimeUtc": "2026-03-07T17:45:00.000Z",
+            "eventId": "fJMRtkrC"
+          },
+          "finalScore": {
+            "home": 2,
+            "away": 2
+          },
+          "odds": 1.77
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Chelsea",
+            "awayName": "Newcastle",
+            "homeLogo": "https://static.flashscore.com/res/image/data/lMxEQ8me-IROrZEJb.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/UXo7VXPq-ImMEe0UF.png",
+            "startDateTimeUtc": "2026-03-14T17:30:00.000Z",
+            "eventId": "juf03THP"
+          },
+          "odds": 1.5,
+          "finalScore": {
+            "home": 0,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Sheffield Utd",
+            "awayName": "Wrexham",
+            "homeLogo": "https://static.flashscore.com/res/image/data/8nXNvlA6-K2FpWLH3.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/bHt6w87k-OxoAKHbA.png",
+            "startDateTimeUtc": "2026-03-21T15:00:00.000Z",
+            "eventId": "6P3ChnON"
+          },
+          "odds": 1.66,
+          "finalScore": {
+            "home": 1,
+            "away": 2
           }
         }
       }
@@ -297,7 +417,8 @@
           "finalScore": {
             "home": 2,
             "away": 1
-          }
+          },
+          "odds": 1.57
         }
       },
       {
@@ -314,7 +435,8 @@
           "finalScore": {
             "home": 1,
             "away": 2
-          }
+          },
+          "odds": 1.73
         }
       },
       {
@@ -331,7 +453,8 @@
           "finalScore": {
             "home": 2,
             "away": 2
-          }
+          },
+          "odds": 1.72
         }
       },
       {
@@ -348,6 +471,123 @@
           "finalScore": {
             "home": 0,
             "away": 4
+          },
+          "odds": 1.66
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": "😡",
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Millwall",
+            "awayName": "Portsmouth",
+            "startDateTimeUtc": "2026-02-21T15:00:00.000Z",
+            "eventId": "0rHTpIFN"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 3
+          },
+          "odds": 1.83
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Bromley",
+            "awayName": "Accrington",
+            "startDateTimeUtc": "2026-02-28T15:00:00.000Z",
+            "eventId": "hl4iki6m"
+          },
+          "odds": 1.75,
+          "finalScore": {
+            "home": 2,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Chesterfield",
+            "awayName": "Colchester",
+            "homeLogo": "https://static.flashscore.com/res/image/data/Me0J5MU0-CIDVVibD.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/f3Vq4yT0-K2FpWLH3.png",
+            "startDateTimeUtc": "2026-03-03T19:45:00.000Z",
+            "eventId": "Q9pvGBvg"
+          },
+          "odds": 1.72,
+          "finalScore": {
+            "home": 3,
+            "away": 0
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Chesterfield",
+            "awayName": "Shrewsbury",
+            "homeLogo": "https://static.flashscore.com/res/image/data/Me0J5MU0-CIDVVibD.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/hbRQ86WH-MeJKaU2T.png",
+            "startDateTimeUtc": "2026-03-07T15:00:00.000Z",
+            "eventId": "Wd2NfYaN"
+          },
+          "finalScore": {
+            "home": 2,
+            "away": 3
+          },
+          "odds": 1.75
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Doncaster",
+            "awayName": "Blackpool",
+            "homeLogo": "https://static.flashscore.com/res/image/data/h8cKoL86-EJBuvj0r.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/xY13hkDN-SEFeTdWk.png",
+            "startDateTimeUtc": "2026-03-14T15:00:00.000Z",
+            "eventId": "QRcrTbu1"
+          },
+          "odds": 1.8,
+          "finalScore": {
+            "home": 2,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Away",
+          "match": {
+            "homeName": "Tranmere",
+            "awayName": "Swindon",
+            "homeLogo": "https://static.flashscore.com/res/image/data/MRWk2GR0-bgElVuX9.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/4hOx9vUH-6qsP6K6r.png",
+            "startDateTimeUtc": "2026-03-21T15:00:00.000Z",
+            "eventId": "8Kxrash2"
+          },
+          "odds": 1.85,
+          "finalScore": {
+            "home": 0,
+            "away": 1
           }
         }
       }
@@ -474,7 +714,8 @@
           "finalScore": {
             "home": 1,
             "away": 2
-          }
+          },
+          "odds": 2
         }
       },
       {
@@ -491,7 +732,8 @@
           "finalScore": {
             "home": 3,
             "away": 1
-          }
+          },
+          "odds": 1.73
         }
       },
       {
@@ -508,7 +750,8 @@
           "finalScore": {
             "home": 2,
             "away": 0
-          }
+          },
+          "odds": 1.61
         }
       },
       {
@@ -525,6 +768,123 @@
           "finalScore": {
             "home": 1,
             "away": 3
+          },
+          "odds": 2.25
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Stockport County",
+            "awayName": "Wigan",
+            "startDateTimeUtc": "2026-02-21T15:00:00.000Z",
+            "eventId": "4vW1g1hD"
+          },
+          "finalScore": {
+            "home": 4,
+            "away": 2
+          },
+          "odds": 1.95
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Away",
+          "match": {
+            "homeName": "Port Vale",
+            "awayName": "Luton",
+            "startDateTimeUtc": "2026-02-28T15:00:00.000Z",
+            "eventId": "4rp4BZDb"
+          },
+          "odds": 2.1,
+          "finalScore": {
+            "home": 1,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Newport",
+            "awayName": "Tranmere",
+            "homeLogo": "https://static.flashscore.com/res/image/data/thMmaqhT-2a4JLW9s.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/MRWk2GR0-bgElVuX9.png",
+            "startDateTimeUtc": "2026-03-03T19:45:00.000Z",
+            "eventId": "lrdfxWFU"
+          },
+          "odds": 1.83,
+          "finalScore": {
+            "home": 3,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Blackpool",
+            "awayName": "Wigan",
+            "homeLogo": "https://static.flashscore.com/res/image/data/xY13hkDN-SEFeTdWk.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/GC6dzmA6-dvLIfKqM.png",
+            "startDateTimeUtc": "2026-03-07T15:00:00.000Z",
+            "eventId": "OMNQE8Kj"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 1
+          },
+          "odds": 1.75
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Away",
+          "match": {
+            "homeName": "Port Vale",
+            "awayName": "Huddersfield",
+            "homeLogo": "https://static.flashscore.com/res/image/data/OvhRMHme-hE2XjgkL.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/xtcM8m6k-MqRhQT76.png",
+            "startDateTimeUtc": "2026-03-14T15:00:00.000Z",
+            "eventId": "QmZIuxP6"
+          },
+          "odds": 2.05,
+          "finalScore": {
+            "home": 0,
+            "away": 0
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": "🤢",
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Grimsby",
+            "awayName": "Barrow",
+            "homeLogo": "https://static.flashscore.com/res/image/data/WdV3GQR0-YuYdJego.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/Ykv0AmhT-O4knw05g.png",
+            "startDateTimeUtc": "2026-03-21T15:00:00.000Z",
+            "eventId": "6XD0n48d"
+          },
+          "odds": 1.83,
+          "finalScore": {
+            "home": 5,
+            "away": 0
           }
         }
       }
@@ -651,7 +1011,8 @@
           "finalScore": {
             "home": 2,
             "away": 1
-          }
+          },
+          "odds": 2.25
         }
       },
       {
@@ -668,7 +1029,8 @@
           "finalScore": {
             "home": 2,
             "away": 2
-          }
+          },
+          "odds": 1.75
         }
       },
       {
@@ -685,7 +1047,8 @@
           "finalScore": {
             "home": 2,
             "away": 1
-          }
+          },
+          "odds": 1.57
         }
       },
       {
@@ -699,6 +1062,123 @@
             "startDateTimeUtc": "2026-02-14T15:00:00.000Z",
             "eventId": "4fnalLEN"
           },
+          "finalScore": {
+            "home": 1,
+            "away": 0
+          },
+          "odds": 1.33
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Away",
+          "match": {
+            "homeName": "Harrogate",
+            "awayName": "Bromley",
+            "startDateTimeUtc": "2026-02-21T15:00:00.000Z",
+            "eventId": "nVDxeMx9"
+          },
+          "finalScore": {
+            "home": 0,
+            "away": 0
+          },
+          "odds": 1.67
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Charlton",
+            "awayName": "Wrexham",
+            "startDateTimeUtc": "2026-02-28T15:00:00.000Z",
+            "eventId": "ITGLqiug"
+          },
+          "odds": 1.83,
+          "finalScore": {
+            "home": 0,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": "😡",
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Rotherham",
+            "awayName": "Mansfield",
+            "homeLogo": "https://static.flashscore.com/res/image/data/WjUotCCN-6qsP6K6r.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/be5DZHCN-tYqwR1Mb.png",
+            "startDateTimeUtc": "2026-03-03T19:45:00.000Z",
+            "eventId": "fJNOcXjS"
+          },
+          "odds": 2.6,
+          "finalScore": {
+            "home": 0,
+            "away": 0
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Luton",
+            "awayName": "Reading",
+            "homeLogo": "https://static.flashscore.com/res/image/data/GQSSQahT-dATKxRKP.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/WxSczele-dvLIfKqM.png",
+            "startDateTimeUtc": "2026-03-07T15:00:00.000Z",
+            "eventId": "jcs8Ro4d"
+          },
+          "finalScore": {
+            "home": 2,
+            "away": 3
+          },
+          "odds": 1.8
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Shrewsbury",
+            "awayName": "Cheltenham",
+            "homeLogo": "https://static.flashscore.com/res/image/data/hbRQ86WH-MeJKaU2T.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/p6AlbdQq-QRSG3Z7h.png",
+            "startDateTimeUtc": "2026-03-14T15:00:00.000Z",
+            "eventId": "v1zsxNlK"
+          },
+          "odds": 2,
+          "finalScore": {
+            "home": 0,
+            "away": 2
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Bromley",
+            "awayName": "Colchester",
+            "homeLogo": "https://static.flashscore.com/res/image/data/4A7Fq796-4I5EkmiL.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/f3Vq4yT0-K2FpWLH3.png",
+            "startDateTimeUtc": "2026-03-21T15:00:00.000Z",
+            "eventId": "CAx5cUGc"
+          },
+          "odds": 2.2,
           "finalScore": {
             "home": 1,
             "away": 0
@@ -828,7 +1308,8 @@
           "finalScore": {
             "home": 4,
             "away": 2
-          }
+          },
+          "odds": 1.8
         }
       },
       {
@@ -845,7 +1326,8 @@
           "finalScore": {
             "home": 0,
             "away": 2
-          }
+          },
+          "odds": 1.83
         }
       },
       {
@@ -862,7 +1344,8 @@
           "finalScore": {
             "home": 2,
             "away": 3
-          }
+          },
+          "odds": 1.56
         }
       },
       {
@@ -879,6 +1362,123 @@
           "finalScore": {
             "home": 3,
             "away": 1
+          },
+          "odds": 2.1
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Aston Villa",
+            "awayName": "Leeds",
+            "startDateTimeUtc": "2026-02-21T15:00:00.000Z",
+            "eventId": "G8MZEpbl"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 1
+          },
+          "odds": 1.85
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Lincoln",
+            "awayName": "Blackpool",
+            "startDateTimeUtc": "2026-02-28T15:00:00.000Z",
+            "eventId": "b5NxeETH"
+          },
+          "odds": 1.45,
+          "finalScore": {
+            "home": 4,
+            "away": 0
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": "😴",
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Bournemouth",
+            "awayName": "Brentford",
+            "homeLogo": "https://static.flashscore.com/res/image/data/C60HMWTH-tCGtX12c.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/SjSCLv86-r9Mudk7j.png",
+            "startDateTimeUtc": "2026-03-03T19:30:00.000Z",
+            "eventId": "IZVlo9vp"
+          },
+          "odds": 1.5,
+          "finalScore": {
+            "home": 0,
+            "away": 0
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Bradford City",
+            "awayName": "Leyton Orient",
+            "homeLogo": "https://static.flashscore.com/res/image/data/E7ZPpcS0-jZPmvQW1.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/Yovw905k-K2FpWLH3.png",
+            "startDateTimeUtc": "2026-03-07T15:00:00.000Z",
+            "eventId": "Cr4LzjsA"
+          },
+          "finalScore": {
+            "home": 2,
+            "away": 1
+          },
+          "odds": 1.85
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Norwich",
+            "awayName": "Preston",
+            "homeLogo": "https://static.flashscore.com/res/image/data/GvTpbCjC-tCGtX12c.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/pzTKMome-KSOT8pKJ.png",
+            "startDateTimeUtc": "2026-03-14T15:00:00.000Z",
+            "eventId": "dpRLGXHs"
+          },
+          "odds": 1.61,
+          "finalScore": {
+            "home": 2,
+            "away": 0
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": "😴",
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Watford",
+            "awayName": "Leicester",
+            "homeLogo": "https://static.flashscore.com/res/image/data/pYQ39lBN-QHkJrpz6.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/CvL5rhhT-UNZg5BP0.png",
+            "startDateTimeUtc": "2026-03-21T15:00:00.000Z",
+            "eventId": "tYITuuiA"
+          },
+          "odds": 1.72,
+          "finalScore": {
+            "home": 0,
+            "away": 0
           }
         }
       }
@@ -1005,7 +1605,8 @@
           "finalScore": {
             "home": 1,
             "away": 1
-          }
+          },
+          "odds": 1.75
         }
       },
       {
@@ -1022,7 +1623,8 @@
           "finalScore": {
             "home": 1,
             "away": 1
-          }
+          },
+          "odds": 1.83
         }
       },
       {
@@ -1039,7 +1641,8 @@
           "finalScore": {
             "home": 0,
             "away": 3
-          }
+          },
+          "odds": 2
         }
       },
       {
@@ -1053,6 +1656,123 @@
             "startDateTimeUtc": "2026-02-14T15:00:00.000Z",
             "eventId": "j97fFiGl"
           },
+          "finalScore": {
+            "home": 1,
+            "away": 1
+          },
+          "odds": 1.75
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Wrexham",
+            "awayName": "Ipswich",
+            "startDateTimeUtc": "2026-02-21T15:00:00.000Z",
+            "eventId": "pIDgtIY0"
+          },
+          "finalScore": {
+            "home": 5,
+            "away": 3
+          },
+          "odds": 1.8
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Newcastle",
+            "awayName": "Everton",
+            "startDateTimeUtc": "2026-02-28T15:00:00.000Z",
+            "eventId": "Wxb1fDHc"
+          },
+          "odds": 1.75,
+          "finalScore": {
+            "home": 2,
+            "away": 3
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Away",
+          "match": {
+            "homeName": "Port Vale",
+            "awayName": "Bristol City",
+            "homeLogo": "https://static.flashscore.com/res/image/data/OvhRMHme-hE2XjgkL.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/CGC2jhT0-OdaWmcNh.png",
+            "startDateTimeUtc": "2026-03-03T19:45:00.000Z",
+            "eventId": "MefAn2to"
+          },
+          "odds": 1.75,
+          "finalScore": {
+            "home": 0,
+            "away": 0
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": "😡",
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Sheffield Utd",
+            "awayName": "West Brom",
+            "homeLogo": "https://static.flashscore.com/res/image/data/8nXNvlA6-K2FpWLH3.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/QsGXnZjC-ImMEe0UF.png",
+            "startDateTimeUtc": "2026-03-07T15:00:00.000Z",
+            "eventId": "xnF4Mdkd"
+          },
+          "finalScore": {
+            "home": 1,
+            "away": 1
+          },
+          "odds": 1.75
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "Away",
+          "match": {
+            "homeName": "Exeter",
+            "awayName": "Cardiff",
+            "homeLogo": "https://static.flashscore.com/res/image/data/ADJGVqT0-lfuHfHs4.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/AaPWNHkC-x4VfTaKj.png",
+            "startDateTimeUtc": "2026-03-14T15:00:00.000Z",
+            "eventId": "4SwWVXnL"
+          },
+          "odds": 1.8,
+          "finalScore": {
+            "home": 0,
+            "away": 4
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Luton",
+            "awayName": "Stockport County",
+            "homeLogo": "https://static.flashscore.com/res/image/data/GQSSQahT-dATKxRKP.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/2cPdIOlC-jV9EvOUh.png",
+            "startDateTimeUtc": "2026-03-21T12:30:00.000Z",
+            "eventId": "x2mTBrL8"
+          },
+          "odds": 1.7,
           "finalScore": {
             "home": 1,
             "away": 1
