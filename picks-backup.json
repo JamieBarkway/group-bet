@@ -870,7 +870,7 @@
       },
       {
         "outcome": "L",
-        "emoji": "🤢",
+        "emoji": "",
         "prediction": {
           "type": "BTTS",
           "match": {
