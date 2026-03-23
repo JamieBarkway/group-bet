@@ -191,7 +191,21 @@ export async function POST(req: Request) {
         allPicksMessage += streakSummary.join("\n");
       }
 
-      allPicksMessage += `\n\nGood luck everyone! 🍀`;
+      // Determine whose turn it is to place the bet
+      const turnOrder = [
+        "Brett",
+        "Andy Barky",
+        "The Real Barky",
+        "Hudo",
+        "Gaz",
+        "Clarky",
+      ];
+      const currentWeekIndex =
+        Math.max(...users.map((u: any) => u.results.length)) - 1;
+      const whoseTurn = turnOrder[currentWeekIndex % turnOrder.length];
+      allPicksMessage += `\n\nIt's <b>${whoseTurn}'s</b> turn to place the bet.\n`;
+
+      allPicksMessage += `\n\nGood luck everyone 🍀`;
 
       await sendTelegramNotification(allPicksMessage);
     }
