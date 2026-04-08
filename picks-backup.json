@@ -965,8 +965,8 @@
         }
       },
       {
-        "outcome": "L",
-        "emoji": "😡",
+        "outcome": "W",
+        "emoji": "😅",
         "prediction": {
           "type": "Home",
           "match": {
@@ -1636,7 +1636,7 @@
       },
       {
         "outcome": "L",
-        "emoji": null,
+        "emoji": "🤢",
         "prediction": {
           "type": "Home",
           "match": {
