@@ -691,7 +691,7 @@ export default function ResultsHistory({
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🤢</span>
+                <span className="text-2xl">😅</span>
                 <span className="text-slate-200 text-sm">
                   Early payout luck
                 </span>
