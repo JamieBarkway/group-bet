@@ -187,8 +187,8 @@ function recalcEmojis(
   results: Array<{ outcome: "W" | "L" | "P"; emoji: string | null }>,
   specialEmojis?: Record<number, string>,
 ) {
-  // Define special emojis that should be preserved (fine emojis)
-  const specialEmojiSet = new Set(["🤢", "🤣", "🤦‍♂️", "😴"]);
+  // Define special emojis that should be preserved (fine emojis + early payout)
+  const specialEmojiSet = new Set(["🤢", "🤣", "🤦‍♂️", "😴", "😅"]);
 
   // Recompute emojis for win/loss streaks; pending predictions get no emoji
   let runOutcome: "W" | "L" | null = null;
@@ -510,5 +510,68 @@ export async function POST() {
       { settled: 0, error: String(error) },
       { status: 500 },
     );
+  }
+}
+
+// PATCH: Override a loss to a win (e.g. team was 2 goals up — early payout rule)
+// Only accessible by "The Real Barky"
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const { username, resultIndex, requestedBy } = body;
+
+    if (requestedBy !== "The Real Barky") {
+      return NextResponse.json(
+        { error: "Only The Real Barky can override results" },
+        { status: 403 },
+      );
+    }
+
+    if (typeof username !== "string" || typeof resultIndex !== "number") {
+      return NextResponse.json(
+        { error: "Invalid parameters" },
+        { status: 400 },
+      );
+    }
+
+    const raw = fs.readFileSync(DATA_PATH, "utf-8");
+    const users: any[] = JSON.parse(raw);
+
+    const user = users.find((u) => u.username === username);
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const result = user.results[resultIndex];
+    if (!result) {
+      return NextResponse.json({ error: "Result not found" }, { status: 404 });
+    }
+
+    if (result.outcome !== "L") {
+      return NextResponse.json(
+        { error: "Can only override a loss" },
+        { status: 400 },
+      );
+    }
+
+    // Override the loss to a win
+    result.outcome = "W";
+
+    // Build special emojis map so 😅 is preserved alongside streak emojis
+    const userIndex = users.indexOf(user);
+    const specialEmojis: Record<number, Record<number, string>> = {};
+    specialEmojis[userIndex] = { [resultIndex]: "😅" };
+
+    // Recalculate emojis for all users (streak emojis may change)
+    users.forEach((u, ui) => recalcEmojis(u.results, specialEmojis[ui]));
+
+    fs.writeFileSync(DATA_PATH, JSON.stringify(users, null, 2));
+
+    return NextResponse.json({
+      success: true,
+      message: "Result overridden to win",
+    });
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }

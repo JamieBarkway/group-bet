@@ -41,6 +41,7 @@ export default function ResultsHistory({
   const [resultDetail, setResultDetail] = useState<{
     username: string;
     outcome: "W" | "L";
+    resultIndex: number;
     type?: string;
     match?: {
       homeName: string;
@@ -52,6 +53,7 @@ export default function ResultsHistory({
   } | null>(null);
   const [fetchingScore, setFetchingScore] = useState(false);
   const [oddsModalRound, setOddsModalRound] = useState<number | null>(null);
+  const [overriding, setOverriding] = useState(false);
 
   const handleRemovePrediction = async (
     username: string,
@@ -76,6 +78,37 @@ export default function ResultsHistory({
     } catch (err) {
       alert(err instanceof Error ? err.message : "Failed to remove prediction");
       setRemoving(false);
+    }
+  };
+
+  const handleOverrideResult = async () => {
+    if (!resultDetail || resultDetail.outcome !== "L") return;
+    if (!confirm("Override this loss to a win? (2 goals up early payout)"))
+      return;
+
+    setOverriding(true);
+    try {
+      const res = await fetch("/api/results", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: resultDetail.username,
+          resultIndex: resultDetail.resultIndex,
+          requestedBy: selectedPlayer,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to override result");
+      }
+
+      // Refresh data and close modal
+      window.location.reload();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to override result");
+    } finally {
+      setOverriding(false);
     }
   };
 
@@ -598,6 +631,7 @@ export default function ResultsHistory({
                               setResultDetail({
                                 username: player.username,
                                 outcome: r.outcome,
+                                resultIndex: i,
                                 type: r.prediction.type,
                                 match: r.prediction.match,
                                 finalScore: (r as any).prediction?.finalScore,
@@ -1018,6 +1052,18 @@ export default function ResultsHistory({
                   </span>
                 </div>
               )}
+              {selectedPlayer === "The Real Barky" &&
+                resultDetail.outcome === "L" && (
+                  <button
+                    onClick={handleOverrideResult}
+                    disabled={overriding}
+                    className="w-full mt-2 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-semibold shadow transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {overriding
+                      ? "Overriding..."
+                      : "😅 2 Goals Up — Override to Win"}
+                  </button>
+                )}
             </div>
           </div>
         </div>
