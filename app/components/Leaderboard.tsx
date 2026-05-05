@@ -70,7 +70,7 @@ export default function Leaderboard({
     if (odds >= 1.88) return "bg-green-600";
     if (odds >= 1.85) return "bg-green-500";
     if (odds >= 1.82) return "bg-lime-500";
-    if (odds >= 1.80) return "bg-yellow-500";
+    if (odds >= 1.8) return "bg-yellow-500";
     if (odds >= 1.77) return "bg-amber-500";
     if (odds >= 1.74) return "bg-orange-500";
     if (odds >= 1.71) return "bg-orange-600";
@@ -82,12 +82,12 @@ export default function Leaderboard({
     if (odds === 0) return "bg-slate-600"; // No data
     // Range: 1.65 (lowest) to 1.95 (highest)
     // Higher odds = better (winning with riskier bets)
-    if (odds >= 1.90) return "bg-green-600";
+    if (odds >= 1.9) return "bg-green-600";
     if (odds >= 1.85) return "bg-green-500";
-    if (odds >= 1.80) return "bg-lime-500";
+    if (odds >= 1.8) return "bg-lime-500";
     if (odds >= 1.77) return "bg-yellow-500";
     if (odds >= 1.74) return "bg-amber-500";
-    if (odds >= 1.70) return "bg-orange-500";
+    if (odds >= 1.7) return "bg-orange-500";
     if (odds >= 1.67) return "bg-orange-600";
     return "bg-red-600";
   };
@@ -174,6 +174,17 @@ export default function Leaderboard({
 
       if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
       if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+
+      // Tiebreaker 1: highest average winning odds (desc)
+      const aAvgWinOdds = parseFloat(a.avgWinningOdds) || 0;
+      const bAvgWinOdds = parseFloat(b.avgWinningOdds) || 0;
+      if (aAvgWinOdds > bAvgWinOdds) return -1;
+      if (aAvgWinOdds < bAvgWinOdds) return 1;
+
+      // Tiebreaker 2: least fines (asc)
+      if (a.fineTotal < b.fineTotal) return -1;
+      if (a.fineTotal > b.fineTotal) return 1;
+
       return 0;
     });
 
@@ -406,13 +417,17 @@ export default function Leaderboard({
                     {u.losses}
                   </td>
                   <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-center">
-                    <span className={`inline-flex items-center gap-1 ${getAvgOddsColor(u.avgOdds)} text-white px-1.5 md:px-2.5 py-1 rounded text-xs font-semibold`}>
+                    <span
+                      className={`inline-flex items-center gap-1 ${getAvgOddsColor(u.avgOdds)} text-white px-1.5 md:px-2.5 py-1 rounded text-xs font-semibold`}
+                    >
                       <span>💰</span>
                       <span>{u.avgOdds}</span>
                     </span>
                   </td>
                   <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-center">
-                    <span className={`inline-flex items-center gap-1 ${getAvgWinningOddsColor(u.avgWinningOdds)} text-white px-1.5 md:px-2.5 py-1 rounded text-xs font-semibold`}>
+                    <span
+                      className={`inline-flex items-center gap-1 ${getAvgWinningOddsColor(u.avgWinningOdds)} text-white px-1.5 md:px-2.5 py-1 rounded text-xs font-semibold`}
+                    >
                       <span>🏆</span>
                       <span>{u.avgWinningOdds}</span>
                     </span>
