@@ -784,14 +784,12 @@ export default function ResultsHistory({
               </tr>
             </thead>
             <tbody>
-              <tr className="bg-slate-800 hover:bg-slate-700 transition-colors">
-                <td className="px-6 py-4 text-sm font-medium text-white">
-                  Week 22
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-bold">
-                    £337
-                  </span>
+              <tr className="bg-slate-800">
+                <td
+                  colSpan={2}
+                  className="px-6 py-4 text-sm text-slate-400 text-center"
+                >
+                  No winnings yet
                 </td>
               </tr>
             </tbody>

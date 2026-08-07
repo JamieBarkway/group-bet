@@ -182,11 +182,11 @@ export default function WeekendFixtures({
         // Auto-select the tab based on what's available
         const hasMidweek = next7Days.some((f) => {
           const day = new Date(f.startDateTimeUtc).getDay();
-          return day >= 1 && day <= 5; // Mon-Fri
+          return day >= 1 && day <= 4; // Mon-Thu
         });
         const hasWeekend = next7Days.some((f) => {
           const day = new Date(f.startDateTimeUtc).getDay();
-          return day === 0 || day === 6; // Sat-Sun
+          return day === 0 || day >= 5; // Fri-Sun
         });
         if (hasMidweek && !hasWeekend) setActiveTab("midweek");
         else if (hasWeekend) setActiveTab("weekend");
@@ -229,14 +229,14 @@ export default function WeekendFixtures({
       </div>
     );
 
-  // Split fixtures into midweek (Mon-Fri) and weekend (Sat-Sun)
+  // Split fixtures into midweek (Mon-Thu) and weekend (Fri-Sun)
   const midweekFixtures = fixtures.filter((f) => {
     const day = new Date(f.startDateTimeUtc).getDay();
-    return day >= 1 && day <= 5;
+    return day >= 1 && day <= 4;
   });
   const weekendFixtures = fixtures.filter((f) => {
     const day = new Date(f.startDateTimeUtc).getDay();
-    return day === 0 || day === 6;
+    return day === 0 || day >= 5;
   });
 
   const activeFixtures =

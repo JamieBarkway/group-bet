@@ -38,6 +38,11 @@ const LEAGUES = [
     endpoint:
       "https://api.sportdb.dev/api/flashscore/football/england:198/efl-cup:OMT80ou8/2026-2027/fixtures?page=1",
   },
+  {
+    name: "Scottish Premier League",
+    endpoint:
+      "https://api.sportdb.dev/api/flashscore/football/scotland:199/premiership:tGwiyvJ1/2026-2027/fixtures?page=1",
+  },
 ];
 
 const oddsEndpoint =
