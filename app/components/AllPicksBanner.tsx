@@ -18,6 +18,7 @@ type Pick = {
         home: number | null;
         away: number | null;
       };
+      odds?: number;
     };
   } | null;
 };
@@ -349,6 +350,11 @@ export default function AllPicksBanner({
                     >
                       {item.prediction?.prediction?.type}
                     </span>
+                    {item.prediction?.prediction?.odds && (
+                      <span className="px-2 py-1 bg-emerald-600 text-white text-xs font-bold rounded-full">
+                        {item.prediction.prediction.odds}
+                      </span>
+                    )}
                   </div>
                 </div>
                 {item.prediction?.prediction?.match && (

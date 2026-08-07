@@ -5,34 +5,31 @@ import { NextResponse } from "next/server";
 const DATA_PATH = path.join(process.cwd(), "app/data", "picks.json");
 
 async function sendTelegramNotification(message: string) {
-  const token = "7771975489:AAGVi4mSjqBXccJvUmJi0CYfhuM1wrwQK74";
-  const chatId = "-5098513631";
-
-  if (!token || !chatId) {
-    console.log("Telegram not configured, skipping notification");
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      `https://api.telegram.org/bot${token}/sendMessage`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-          parse_mode: "HTML",
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      console.error("Telegram notification failed:", await response.text());
-    }
-  } catch (error) {
-    console.error("Telegram notification error:", error);
-  }
+  // const token = "7771975489:AAGVi4mSjqBXccJvUmJi0CYfhuM1wrwQK74";
+  // const chatId = "-5098513631XXXXX";
+  // if (!token || !chatId) {
+  //   console.log("Telegram not configured, skipping notification");
+  //   return;
+  // }
+  // try {
+  //   const response = await fetch(
+  //     `https://api.telegram.org/bot${token}/sendMessage`,
+  //     {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         chat_id: chatId,
+  //         text: message,
+  //         parse_mode: "HTML",
+  //       }),
+  //     },
+  //   );
+  //   if (!response.ok) {
+  //     console.error("Telegram notification failed:", await response.text());
+  //   }
+  // } catch (error) {
+  //   console.error("Telegram notification error:", error);
+  // }
 }
 
 export async function POST(req: Request) {
@@ -46,9 +43,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const { type, match } = prediction;
+    const { type, match, odds } = prediction;
 
-    if (!["Home", "Away", "BTTS", "O2.5"].includes(type)) {
+    if (!["Home", "Away", "Draw", "BTTS", "O2.5"].includes(type)) {
       return NextResponse.json(
         { error: "Invalid prediction type" },
         { status: 400 },
@@ -103,6 +100,7 @@ export async function POST(req: Request) {
           startDateTimeUtc: match.startDateTimeUtc,
           eventId: match.eventId,
         },
+        ...(odds != null ? { odds: parseFloat(odds) } : {}),
       },
     });
 
@@ -114,12 +112,16 @@ export async function POST(req: Request) {
         ? "Both Teams To Score"
         : type === "O2.5"
           ? "Over 2.5 Goals"
-          : `${type} Win`;
+          : type === "Draw"
+            ? "Draw"
+            : `${type} Win`;
+
+    const oddsText = odds ? ` @ ${parseFloat(odds).toFixed(2)}` : "";
 
     const message =
       `🎯 <b>New Pick!</b>\n\n` +
       `<b>${username}</b> picked:\n` +
-      `${predictionText}\n\n` +
+      `${predictionText}${oddsText}\n\n` +
       `<i>${match.homeName} vs ${match.awayName}</i>`;
 
     await sendTelegramNotification(message);

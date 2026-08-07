@@ -11,29 +11,37 @@ const LEAGUES = [
   {
     name: "Premier League",
     endpoint:
-      "https://api.sportdb.dev/api/flashscore/football/england:198/premier-league:dYlOSQOD/2025-2026/fixtures?page=1",
+      "https://api.sportdb.dev/api/flashscore/football/england:198/premier-league:dYlOSQOD/2026-2027/fixtures?page=1",
   },
   {
     name: "Championship",
     endpoint:
-      "https://api.sportdb.dev/api/flashscore/football/england:198/championship:2DSCa5fE/2025-2026/fixtures?page=1",
+      "https://api.sportdb.dev/api/flashscore/football/england:198/championship:2DSCa5fE/2026-2027/fixtures?page=1",
   },
   {
     name: "League One",
     endpoint:
-      "https://api.sportdb.dev/api/flashscore/football/england:198/league-one:rJSMG3H0/2025-2026/fixtures?page=1",
+      "https://api.sportdb.dev/api/flashscore/football/england:198/league-one:rJSMG3H0/2026-2027/fixtures?page=1",
   },
   {
     name: "League Two",
     endpoint:
-      "https://api.sportdb.dev/api/flashscore/football/england:198/league-two:0MwU4NW6/2025-2026/fixtures?page=1",
+      "https://api.sportdb.dev/api/flashscore/football/england:198/league-two:0MwU4NW6/2026-2027/fixtures?page=1",
   },
   {
     name: "FA Cup",
     endpoint:
-      "https://api.sportdb.dev/api/flashscore/football/england:198/fa-cup:lYQtaqPQ/2025-2026/fixtures?page=1",
+      "https://api.sportdb.dev/api/flashscore/football/england:198/fa-cup:lYQtaqPQ/2026-2027/fixtures?page=1",
+  },
+  {
+    name: "EFL Cup",
+    endpoint:
+      "https://api.sportdb.dev/api/flashscore/football/england:198/efl-cup:OMT80ou8/2026-2027/fixtures?page=1",
   },
 ];
+
+const oddsEndpoint =
+  "https://api.sportdb.dev/api/flashscore/football/live/odds";
 
 async function fetchLeagueFixtures(leagueName: string, leagueEndpoint: string) {
   const res = await fetch(leagueEndpoint, {
@@ -94,20 +102,88 @@ export async function GET() {
       }));
     });
 
+    // Fetch odds for all fixtures
+    const eventIds = allFixtures.map((f: any) => f.eventId).filter(Boolean);
+    const oddsMap: Record<
+      string,
+      { home: string; draw: string; away: string }
+    > = {};
+
+    if (eventIds.length > 0) {
+      try {
+        const oddsRes = await fetch(oddsEndpoint, {
+          headers: { "X-API-Key": API_KEY },
+          cache: "no-store",
+        });
+        if (oddsRes.ok) {
+          const oddsData: any[] = await oddsRes.json();
+          for (const odd of oddsData) {
+            if (eventIds.includes(odd.eventId)) {
+              oddsMap[odd.eventId] = {
+                home: odd.odds1,
+                draw: odd.odds0,
+                away: odd.odds2,
+              };
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch odds:", err);
+      }
+    }
+
+    // Attach odds to fixtures
+    const fixturesWithOdds = allFixtures.map((f: any) => ({
+      ...f,
+      odds: oddsMap[f.eventId] || null,
+    }));
+
+    // For fixtures missing odds, fetch from match-specific endpoint
+    const missingOdds = fixturesWithOdds.filter(
+      (f: any) => !f.odds && f.eventId,
+    );
+    if (missingOdds.length > 0) {
+      const matchOddsPromises = missingOdds.map(async (f: any) => {
+        try {
+          const res = await fetch(
+            `https://api.sportdb.dev/api/flashscore/match/${encodeURIComponent(f.eventId)}/odds?geoIpCode=GB&geoIpSubdivisionCode=GPENG`,
+            { headers: { "X-API-Key": API_KEY }, cache: "no-store" },
+          );
+          if (!res.ok) return;
+          const data: any[] = await res.json();
+          const hdaEntry = data.find(
+            (d: any) =>
+              d.bettingScope === "FULL_TIME" &&
+              d.bettingType === "HOME_DRAW_AWAY",
+          );
+          if (hdaEntry?.odds?.length >= 3) {
+            f.odds = {
+              home: hdaEntry.odds[0]?.value,
+              draw: hdaEntry.odds[2]?.value,
+              away: hdaEntry.odds[1]?.value,
+            };
+          }
+        } catch {
+          // Skip if individual match odds fetch fails
+        }
+      });
+      await Promise.all(matchOddsPromises);
+    }
+
     // Update cache
-    cachedFixtures = allFixtures;
+    cachedFixtures = fixturesWithOdds;
     cacheTimestamp = now;
 
     // If no fixtures found, include league status for debugging
-    if (allFixtures.length === 0) {
+    if (fixturesWithOdds.length === 0) {
       const response = {
-        fixtures: allFixtures,
+        fixtures: fixturesWithOdds,
         leagueStatus: results,
       };
       return NextResponse.json(response);
     }
 
-    return NextResponse.json(allFixtures);
+    return NextResponse.json(fixturesWithOdds);
   } catch (error) {
     return NextResponse.json(
       {

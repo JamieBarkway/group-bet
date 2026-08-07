@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-type PredictionType = "Home" | "Away" | "BTTS" | "O2.5";
+type PredictionType = "Home" | "Away" | "Draw" | "BTTS" | "O2.5";
 
 export default function WeekendFixtures({
   selectedPlayer,
@@ -63,7 +63,11 @@ export default function WeekendFixtures({
     loadPickState();
   }, [selectedPlayer]);
 
-  const handlePrediction = async (match: any, type: PredictionType) => {
+  const handlePrediction = async (
+    match: any,
+    type: PredictionType,
+    odds?: number,
+  ) => {
     if (!selectedPlayer) {
       alert("Please select a player first");
       return;
@@ -78,6 +82,34 @@ export default function WeekendFixtures({
 
     setSubmitting(true);
     try {
+      let resolvedOdds = odds;
+
+      // Fetch odds from match-odds API if not already available
+      if (!resolvedOdds && match.eventId) {
+        try {
+          const oddsRes = await fetch(
+            `/api/match-odds?eventId=${match.eventId}`,
+          );
+          if (oddsRes.ok) {
+            const oddsData = await oddsRes.json();
+            if (type === "BTTS") {
+              resolvedOdds = parseFloat(oddsData.btts);
+            } else if (type === "O2.5") {
+              resolvedOdds = parseFloat(oddsData.o25);
+            } else if (type === "Home") {
+              resolvedOdds = parseFloat(oddsData.home);
+            } else if (type === "Away") {
+              resolvedOdds = parseFloat(oddsData.away);
+            } else if (type === "Draw") {
+              resolvedOdds = parseFloat(oddsData.draw);
+            }
+            if (isNaN(resolvedOdds as number)) resolvedOdds = undefined;
+          }
+        } catch {
+          // Continue without odds if fetch fails
+        }
+      }
+
       const res = await fetch("/api/predictions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -93,6 +125,7 @@ export default function WeekendFixtures({
               startDateTimeUtc: match.startDateTimeUtc,
               eventId: match.eventId,
             },
+            odds: resolvedOdds,
           },
         }),
       });
@@ -353,31 +386,83 @@ export default function WeekendFixtures({
                                 )}
                               </div>
                             </div>
-                            <div className="grid grid-cols-4 gap-1">
+                            <div className="grid grid-cols-5 gap-1">
                               {takenBy[f.eventId]?.type === "Home" ? (
-                                <div className="px-2 py-1 bg-purple-600 text-white rounded font-semibold text-xs border border-purple-400 cursor-not-allowed">
-                                  Picked by {takenBy[f.eventId].username}
+                                <div className="px-2 py-1 bg-purple-600 text-white rounded font-semibold text-xs border border-purple-400 cursor-not-allowed text-center">
+                                  {takenBy[f.eventId].username}
                                 </div>
                               ) : (
                                 <button
-                                  onClick={() => handlePrediction(f, "Home")}
+                                  onClick={() =>
+                                    handlePrediction(
+                                      f,
+                                      "Home",
+                                      f.odds?.home
+                                        ? parseFloat(f.odds.home)
+                                        : undefined,
+                                    )
+                                  }
                                   disabled={submitting}
-                                  className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center"
                                 >
-                                  Home
+                                  <span>Home</span>
+                                  {f.odds?.home && (
+                                    <span className="text-emerald-300 text-[10px]">
+                                      {f.odds.home}
+                                    </span>
+                                  )}
+                                </button>
+                              )}
+                              {takenBy[f.eventId]?.type === "Draw" ? (
+                                <div className="px-2 py-1 bg-purple-600 text-white rounded font-semibold text-xs border border-purple-400 cursor-not-allowed text-center">
+                                  {takenBy[f.eventId].username}
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    handlePrediction(
+                                      f,
+                                      "Draw" as PredictionType,
+                                      f.odds?.draw
+                                        ? parseFloat(f.odds.draw)
+                                        : undefined,
+                                    )
+                                  }
+                                  disabled={submitting}
+                                  className="px-2 py-1 bg-slate-600 hover:bg-slate-500 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center"
+                                >
+                                  <span>Draw</span>
+                                  {f.odds?.draw && (
+                                    <span className="text-yellow-300 text-[10px]">
+                                      {f.odds.draw}
+                                    </span>
+                                  )}
                                 </button>
                               )}
                               {takenBy[f.eventId]?.type === "Away" ? (
-                                <div className="px-2 py-1 bg-purple-600 text-white rounded font-semibold text-xs border border-purple-400 cursor-not-allowed">
-                                  Picked by {takenBy[f.eventId].username}
+                                <div className="px-2 py-1 bg-purple-600 text-white rounded font-semibold text-xs border border-purple-400 cursor-not-allowed text-center">
+                                  {takenBy[f.eventId].username}
                                 </div>
                               ) : (
                                 <button
-                                  onClick={() => handlePrediction(f, "Away")}
+                                  onClick={() =>
+                                    handlePrediction(
+                                      f,
+                                      "Away",
+                                      f.odds?.away
+                                        ? parseFloat(f.odds.away)
+                                        : undefined,
+                                    )
+                                  }
                                   disabled={submitting}
-                                  className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center"
                                 >
-                                  Away
+                                  <span>Away</span>
+                                  {f.odds?.away && (
+                                    <span className="text-emerald-300 text-[10px]">
+                                      {f.odds.away}
+                                    </span>
+                                  )}
                                 </button>
                               )}
                               {takenBy[f.eventId]?.type === "BTTS" ? (

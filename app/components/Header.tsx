@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Cookies from "js-cookie";
 
 type HeaderProps = {
@@ -74,6 +75,12 @@ export default function Header({ selectedPlayer, onLogout }: HeaderProps) {
             <span className="text-xl md:text-2xl">⬇️</span>
             Jump to Fixtures
           </button>
+          <Link
+            href="/seasons"
+            className="px-3 py-1 md:px-4 md:py-2 bg-slate-600 hover:bg-slate-500 text-white text-sm md:text-base rounded-lg font-semibold transition-colors"
+          >
+            📜 Past Seasons
+          </Link>
           {selectedPlayer === "The Real Barky" && (
             <button
               onClick={handleManualSettle}

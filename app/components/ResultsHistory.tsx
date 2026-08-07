@@ -18,6 +18,7 @@ type PlayerResults = {
         startDateTimeUtc: string;
         eventId: string;
       };
+      odds?: number;
     };
   }>;
 };
@@ -571,7 +572,6 @@ export default function ResultsHistory({
                         return null;
                       })()}
                   </div>
-                  {i + 1}
                 </th>
               ))}
             </tr>
@@ -914,6 +914,11 @@ export default function ResultsHistory({
                           <span className="px-3 py-1 bg-purple-600 text-white text-xs font-bold rounded-full">
                             {item.prediction?.prediction?.type}
                           </span>
+                          {(item.prediction?.prediction as any)?.odds && (
+                            <span className="px-2 py-1 bg-emerald-600 text-white text-xs font-bold rounded-full">
+                              {(item.prediction?.prediction as any)?.odds}
+                            </span>
+                          )}
                         </div>
                       </div>
                       {item.prediction?.prediction?.match && (
@@ -962,12 +967,27 @@ export default function ResultsHistory({
 
             {/* Betslip Footer */}
             <div className="bg-slate-900 px-6 py-4 rounded-b-lg border-t border-slate-700">
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between text-sm mb-2">
                 <span className="text-slate-400">Total Selections</span>
                 <span className="text-white font-bold text-lg">
                   {pendingPredictions.length}
                 </span>
               </div>
+              {(() => {
+                const allOdds = pendingPredictions
+                  .map((p) => (p.prediction?.prediction as any)?.odds)
+                  .filter((o): o is number => typeof o === "number" && o > 0);
+                if (allOdds.length === 0) return null;
+                const combined = allOdds.reduce((acc, o) => acc * o, 1);
+                return (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-400">Combined Odds</span>
+                    <span className="text-emerald-400 font-bold text-lg">
+                      {combined.toFixed(2)}
+                    </span>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
