@@ -5,31 +5,31 @@ import { NextResponse } from "next/server";
 const DATA_PATH = path.join(process.cwd(), "app/data", "picks.json");
 
 async function sendTelegramNotification(message: string) {
-  // const token = "7771975489:AAGVi4mSjqBXccJvUmJi0CYfhuM1wrwQK74";
-  // const chatId = "-5098513631XXXXX";
-  // if (!token || !chatId) {
-  //   console.log("Telegram not configured, skipping notification");
-  //   return;
-  // }
-  // try {
-  //   const response = await fetch(
-  //     `https://api.telegram.org/bot${token}/sendMessage`,
-  //     {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         chat_id: chatId,
-  //         text: message,
-  //         parse_mode: "HTML",
-  //       }),
-  //     },
-  //   );
-  //   if (!response.ok) {
-  //     console.error("Telegram notification failed:", await response.text());
-  //   }
-  // } catch (error) {
-  //   console.error("Telegram notification error:", error);
-  // }
+  const token = "7771975489:AAGVi4mSjqBXccJvUmJi0CYfhuM1wrwQK74";
+  const chatId = "-5098513631XXXXX";
+  if (!token || !chatId) {
+    console.log("Telegram not configured, skipping notification");
+    return;
+  }
+  try {
+    const response = await fetch(
+      `https://api.telegram.org/bot${token}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: "HTML",
+        }),
+      },
+    );
+    if (!response.ok) {
+      console.error("Telegram notification failed:", await response.text());
+    }
+  } catch (error) {
+    console.error("Telegram notification error:", error);
+  }
 }
 
 export async function POST(req: Request) {
