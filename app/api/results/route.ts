@@ -42,27 +42,37 @@ const LEAGUES = [
   {
     name: "Premier League",
     endpoint:
-      "https://api.sportdb.dev/api/flashscore/football/england:198/premier-league:dYlOSQOD/2025-2026/results?page=1",
+      "https://api.sportdb.dev/api/flashscore/football/england:198/premier-league:dYlOSQOD/2026-2027/results?page=1",
   },
   {
     name: "Championship",
     endpoint:
-      "https://api.sportdb.dev/api/flashscore/football/england:198/championship:2DSCa5fE/2025-2026/results?page=1",
+      "https://api.sportdb.dev/api/flashscore/football/england:198/championship:2DSCa5fE/2026-2027/results?page=1",
   },
   {
     name: "League One",
     endpoint:
-      "https://api.sportdb.dev/api/flashscore/football/england:198/league-one:rJSMG3H0/2025-2026/results?page=1",
+      "https://api.sportdb.dev/api/flashscore/football/england:198/league-one:rJSMG3H0/2026-2027/results?page=1",
   },
   {
     name: "League Two",
     endpoint:
-      "https://api.sportdb.dev/api/flashscore/football/england:198/league-two:0MwU4NW6/2025-2026/results?page=1",
+      "https://api.sportdb.dev/api/flashscore/football/england:198/league-two:0MwU4NW6/2026-2027/results?page=1",
   },
   {
     name: "FA Cup",
     endpoint:
-      "https://api.sportdb.dev/api/flashscore/football/england:198/fa-cup:lYQtaqPQ/2025-2026/results?page=1",
+      "https://api.sportdb.dev/api/flashscore/football/england:198/fa-cup:lYQtaqPQ/2026-2027/results?page=1",
+  },
+  {
+    name: "EFL cup",
+    endpoint:
+      "https://api.sportdb.dev/api/flashscore/football/england:198/efl-cup:OMT80ou8/2026-2027/results?page=1",
+  },
+  {
+    name: "Scottish Premier League",
+    endpoint:
+      "https://api.sportdb.dev/api/flashscore/football/scotland:199/premiership:tGwiyvJ1/2026-2027/results?page=1",
   },
 ];
 const DATA_PATH = path.join(process.cwd(), "app/data", "picks.json");
