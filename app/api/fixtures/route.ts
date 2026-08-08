@@ -48,18 +48,21 @@ const LEAGUES = [
 const oddsEndpoint =
   "https://api.sportdb.dev/api/flashscore/football/live/odds";
 
-async function fetchLeagueFixtures(leagueName: string, leagueEndpoint: string) {
-  const res = await fetch(leagueEndpoint, {
-    headers: {
-      "X-API-Key": API_KEY,
-    },
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch ${leagueName} fixtures`);
+async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
+  for (let i = 0; i < retries; i++) {
+    const res = await fetch(url, {
+      headers: { "X-API-Key": API_KEY },
+      cache: "no-store",
+    });
+    if (res.ok) return res;
+    if (i < retries - 1)
+      await new Promise((r) => setTimeout(r, 1000 * (i + 1)));
   }
+  throw new Error(`Failed after ${retries} retries: ${url}`);
+}
 
+async function fetchLeagueFixtures(leagueName: string, leagueEndpoint: string) {
+  const res = await fetchWithRetry(leagueEndpoint);
   const data = await res.json();
   return data;
 }

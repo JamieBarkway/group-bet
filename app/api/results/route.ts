@@ -77,13 +77,20 @@ const LEAGUES = [
 ];
 const DATA_PATH = path.join(process.cwd(), "app/data", "picks.json");
 
-async function fetchLeagueResults(leagueName: string, endpoint: string) {
-  const res = await fetch(endpoint, {
-    headers: { "X-API-Key": API_KEY },
-    cache: "no-store",
-  });
+async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
+  for (let i = 0; i < retries; i++) {
+    const res = await fetch(url, {
+      headers: { "X-API-Key": API_KEY },
+      cache: "no-store",
+    });
+    if (res.ok) return res;
+    if (i < retries - 1) await new Promise((r) => setTimeout(r, 1000 * (i + 1)));
+  }
+  throw new Error(`Failed after ${retries} retries: ${url}`);
+}
 
-  if (!res.ok) throw new Error(`Failed to fetch ${leagueName} results`);
+async function fetchLeagueResults(leagueName: string, endpoint: string) {
+  const res = await fetchWithRetry(endpoint);
   const data = await res.json();
   return Array.isArray(data) ? data : data.results || data.fixtures || [];
 }
@@ -242,6 +249,10 @@ function recalcEmojis(
 
 export async function POST() {
   try {
+    // Invalidate cache so we fetch fresh results
+    cachedResults = null;
+    resultsCacheTimestamp = null;
+
     // Load current picks
     const raw = fs.readFileSync(DATA_PATH, "utf-8");
     const users: any[] = JSON.parse(raw);
