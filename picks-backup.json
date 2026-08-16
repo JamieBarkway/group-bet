@@ -1,26 +1,272 @@
 [
   {
     "username": "Brett",
-    "results": []
+    "results": [
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Dundee FC",
+            "awayName": "Aberdeen",
+            "homeLogo": "https://static.flashscore.com/res/image/data/QP7A0aDN-tbyWw4LR.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/dOffsEjT-SQqfdcHF.png",
+            "startDateTimeUtc": "2026-08-08T14:00:00.000Z",
+            "eventId": "WYYBEUYI"
+          },
+          "odds": 1.62,
+          "finalScore": {
+            "home": 2,
+            "away": 0
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Portsmouth",
+            "awayName": "QPR",
+            "homeLogo": "https://static.flashscore.com/res/image/data/nHzBM186-nkTKkN30.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/hdnBLqiC-z9YsXKZd.png",
+            "startDateTimeUtc": "2026-08-15T14:00:00.000Z",
+            "eventId": "AZ2d27Pr"
+          },
+          "odds": 1.7,
+          "finalScore": {
+            "home": 1,
+            "away": 3
+          }
+        }
+      }
+    ]
   },
   {
     "username": "Andy Barky",
-    "results": []
+    "results": [
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "AFC Wimbledon",
+            "awayName": "Newport",
+            "homeLogo": "https://static.flashscore.com/res/image/data/hjCWBER0-t88KnYHu.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/thMmaqhT-2a4JLW9s.png",
+            "startDateTimeUtc": "2026-08-08T14:00:00.000Z",
+            "eventId": "8IYtQSBO"
+          },
+          "odds": 1.67,
+          "finalScore": {
+            "home": 1,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": "😴",
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Northampton",
+            "awayName": "Swindon",
+            "homeLogo": "https://static.flashscore.com/res/image/data/UNNonLS0-zVge1dyc.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/4hOx9vUH-6qsP6K6r.png",
+            "startDateTimeUtc": "2026-08-15T14:00:00.000Z",
+            "eventId": "zNT4p8D6"
+          },
+          "odds": 1.7,
+          "finalScore": {
+            "home": 0,
+            "away": 0
+          }
+        }
+      }
+    ]
   },
   {
     "username": "Clarky",
-    "results": []
+    "results": [
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Stockport County",
+            "awayName": "Doncaster",
+            "homeLogo": "https://static.flashscore.com/res/image/data/2cPdIOlC-jV9EvOUh.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/h8cKoL86-EJBuvj0r.png",
+            "startDateTimeUtc": "2026-08-08T14:00:00.000Z",
+            "eventId": "A1JxQ7fR"
+          },
+          "odds": 1.64,
+          "finalScore": {
+            "home": 1,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Barnsley",
+            "awayName": "Bromley",
+            "homeLogo": "https://static.flashscore.com/res/image/data/xbz5uXhT-WdTjExSq.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/4A7Fq796-4I5EkmiL.png",
+            "startDateTimeUtc": "2026-08-15T14:00:00.000Z",
+            "eventId": "ljFdFodL"
+          },
+          "odds": 2,
+          "finalScore": {
+            "home": 0,
+            "away": 1
+          }
+        }
+      }
+    ]
   },
   {
     "username": "Hudo",
-    "results": []
+    "results": [
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Swansea",
+            "awayName": "Birmingham",
+            "homeLogo": "https://static.flashscore.com/res/image/data/GxgUhame-Ozj3JWKn.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/04SrzD5k-fuIfr9AH.png",
+            "startDateTimeUtc": "2026-08-08T14:00:00.000Z",
+            "eventId": "xhZmtu2M"
+          },
+          "odds": 1.67,
+          "finalScore": {
+            "home": 0,
+            "away": 1
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Chesterfield",
+            "awayName": "Fleetwood",
+            "homeLogo": "https://static.flashscore.com/res/image/data/Me0J5MU0-CIDVVibD.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/EaWjWMle-2iK9htx0.png",
+            "startDateTimeUtc": "2026-08-15T14:00:00.000Z",
+            "eventId": "CCUXV8bD"
+          },
+          "odds": 1.85,
+          "finalScore": {
+            "home": 0,
+            "away": 1
+          }
+        }
+      }
+    ]
   },
   {
     "username": "The Real Barky",
-    "results": []
+    "results": [
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Grimsby",
+            "awayName": "Blackpool",
+            "homeLogo": "https://static.flashscore.com/res/image/data/WdV3GQR0-YuYdJego.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/xY13hkDN-SEFeTdWk.png",
+            "startDateTimeUtc": "2026-08-08T14:00:00.000Z",
+            "eventId": "WztnMJAj"
+          },
+          "odds": 1.67,
+          "finalScore": {
+            "home": 1,
+            "away": 3
+          }
+        }
+      },
+      {
+        "outcome": "W",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Charlton",
+            "awayName": "Derby",
+            "homeLogo": "https://static.flashscore.com/res/image/data/jg6JyX7k-6FckE7BN.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/xrSu4XPq-4YcXd6yA.png",
+            "startDateTimeUtc": "2026-08-15T14:00:00.000Z",
+            "eventId": "vXLWonu2"
+          },
+          "odds": 1.83,
+          "finalScore": {
+            "home": 2,
+            "away": 1
+          }
+        }
+      }
+    ]
   },
   {
     "username": "Gaz",
-    "results": []
+    "results": [
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Sheffield Wed",
+            "awayName": "Bolton",
+            "homeLogo": "https://static.flashscore.com/res/image/data/GpiRvDoe-KxUliwTt.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/8jj84yCN-bJFnYpTt.png",
+            "startDateTimeUtc": "2026-08-08T14:00:00.000Z",
+            "eventId": "fH3W9e4T"
+          },
+          "odds": 1.57,
+          "finalScore": {
+            "home": 1,
+            "away": 0
+          }
+        }
+      },
+      {
+        "outcome": "L",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Norwich",
+            "awayName": "West Brom",
+            "homeLogo": "https://static.flashscore.com/res/image/data/GvTpbCjC-tCGtX12c.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/QsGXnZjC-ImMEe0UF.png",
+            "startDateTimeUtc": "2026-08-15T14:00:00.000Z",
+            "eventId": "E3HQ7T1L"
+          },
+          "odds": 1.95,
+          "finalScore": {
+            "home": 1,
+            "away": 2
+          }
+        }
+      }
+    ]
   }
 ]
