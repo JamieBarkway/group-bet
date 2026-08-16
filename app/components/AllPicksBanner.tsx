@@ -29,6 +29,7 @@ export default function AllPicksBanner({
   selectedPlayer?: string;
 }) {
   const [picks, setPicks] = useState<Pick[]>([]);
+  const [totalPlayers, setTotalPlayers] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showBanner, setShowBanner] = useState(false);
   const [currentRound, setCurrentRound] = useState(0);
@@ -81,17 +82,13 @@ export default function AllPicksBanner({
       try {
         const res = await fetch("/api/picks/raw");
         const data = await res.json();
+        const playerCount = data.length;
+        setTotalPlayers(playerCount);
 
         // Calculate the current round number (max results length)
         const maxResults = Math.max(...data.map((u: any) => u.results.length));
 
-        // Check if all players have the same number of results (all on same round)
-        const allOnSameRound = data.every(
-          (u: any) => u.results.length === maxResults,
-        );
-
-        if (!allOnSameRound) {
-          // Players are on different rounds - don't show banner
+        if (playerCount === 0) {
           setShowBanner(false);
           setLoading(false);
           return;
@@ -114,16 +111,17 @@ export default function AllPicksBanner({
 
         // Check if all picks are settled (no pending)
         const allSettled =
-          latestPicks.length === 6 &&
+          latestPicks.length === playerCount &&
           latestPicks.every((p) => p.outcome !== "P");
 
         // Check if all picks are pending
         const allPending =
-          latestPicks.length === 6 &&
+          latestPicks.length === playerCount &&
           latestPicks.every((p) => p.outcome === "P");
 
-        // Check if we have at least 6 picks (complete round)
-        const hasCompleteRound = latestPicks.length === 6;
+        // Check if we have a complete round for all players
+        const hasCompleteRound =
+          playerCount > 0 && latestPicks.length === playerCount;
 
         if (hasCompleteRound) {
           // Check if within 24 hour window from latest kickoff
@@ -216,6 +214,7 @@ export default function AllPicksBanner({
     "Hudo",
     "Gaz",
     "Clarky",
+    "Zander",
   ];
   const turnForWeek = (weekIndex: number) =>
     turnOrder[(weekIndex - 1) % turnOrder.length];
@@ -254,7 +253,7 @@ export default function AllPicksBanner({
               <span className="text-white font-bold text-sm">
                 {hasMixedResults
                   ? `${settledCount}/${picks.length}`
-                  : `${picks.length}/6`}
+                  : `${picks.length}/${totalPlayers}`}
               </span>
             </div>
           </div>

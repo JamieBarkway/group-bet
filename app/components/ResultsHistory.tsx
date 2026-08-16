@@ -377,6 +377,7 @@ export default function ResultsHistory({
     "Hudo",
     "Gaz",
     "Clarky",
+    "Zander",
   ];
   const turnForWeek = (weekIndex: number) =>
     turnOrder[weekIndex % turnOrder.length];
@@ -446,31 +447,20 @@ export default function ResultsHistory({
   });
   const anyFines = fineRows.some((r) => r.count > 0);
 
-  // Find the first round that's incomplete (doesn't have all W/L results)
-  let turnRoundIndex = maxResults; // default to next round
-  for (let i = 0; i < maxResults; i++) {
-    const isComplete = players.every(
-      (player) =>
-        player.results[i] &&
-        (player.results[i].outcome === "W" ||
-          player.results[i].outcome === "L"),
-    );
-    if (!isComplete) {
-      turnRoundIndex = i;
-      break;
-    }
-  }
-
   const currentWeek = maxResults;
+  const hasAnyPendingPredictions = players.some((player) =>
+    player.results.some((result) => result.outcome === "P"),
+  );
+  const turnRoundIndex = hasAnyPendingPredictions
+    ? Math.max(currentWeek - 1, 0)
+    : currentWeek;
   const nextPlayer = turnForWeek(turnRoundIndex);
   const isMyTurn = nextPlayer === selectedPlayer;
   const betPlaced = betStatus?.placedBy;
 
-  // Only enable bet placement when everyone has a pending prediction for this round
-  const allPredictionsInRound = players.every(
-    (player) =>
-      player.results[turnRoundIndex] &&
-      player.results[turnRoundIndex].outcome === "P",
+  // Only enable bet placement when everyone has an active pending prediction
+  const allPredictionsInRound = players.every((player) =>
+    player.results.some((result) => result.outcome === "P"),
   );
 
   return (

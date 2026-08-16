@@ -201,6 +201,7 @@ export async function POST(req: Request) {
         "Hudo",
         "Gaz",
         "Clarky",
+        "Zander",
       ];
       const currentWeekIndex =
         Math.max(...users.map((u: any) => u.results.length)) - 1;
