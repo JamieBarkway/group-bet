@@ -2,25 +2,36 @@
 
 import { useEffect, useState } from "react";
 
+type Prediction = {
+  type: string;
+  match: {
+    homeName: string;
+    awayName: string;
+    startDateTimeUtc: string;
+    eventId: string;
+  };
+  finalScore?: {
+    home: number | null;
+    away: number | null;
+  };
+  odds?: number;
+};
+
+type PlayerResult = {
+  outcome: "W" | "L" | "P";
+  emoji?: string | null;
+  prediction: Prediction | null;
+};
+
 type Pick = {
   username: string;
   outcome: "W" | "L" | "P";
-  prediction: {
-    prediction: {
-      type: string;
-      match: {
-        homeName: string;
-        awayName: string;
-        startDateTimeUtc: string;
-        eventId: string;
-      };
-      finalScore?: {
-        home: number | null;
-        away: number | null;
-      };
-      odds?: number;
-    };
-  } | null;
+  prediction: PlayerResult | null;
+};
+
+type Player = {
+  username: string;
+  results: PlayerResult[];
 };
 
 export default function AllPicksBanner({
@@ -81,12 +92,12 @@ export default function AllPicksBanner({
     const loadPicks = async () => {
       try {
         const res = await fetch("/api/picks/raw");
-        const data = await res.json();
+        const data = (await res.json()) as Player[];
         const playerCount = data.length;
         setTotalPlayers(playerCount);
 
         // Calculate the current round number (max results length)
-        const maxResults = Math.max(...data.map((u: any) => u.results.length));
+        const maxResults = Math.max(...data.map((u) => u.results.length));
 
         if (playerCount === 0) {
           setShowBanner(false);
@@ -96,36 +107,36 @@ export default function AllPicksBanner({
 
         setCurrentRound(maxResults);
 
-        // Find all players' latest results (all from same round)
-        const latestPicks: Pick[] = [];
-        data.forEach((player: any) => {
-          const lastResult = player.results[player.results.length - 1];
-          if (lastResult && lastResult.prediction) {
-            latestPicks.push({
+        // Find picks for the current round only. Do not backfill missing
+        // current-round picks with a player's previous settled result.
+        const currentRoundPicks: Pick[] = [];
+        data.forEach((player) => {
+          const roundResult = player.results[maxResults - 1];
+          if (roundResult && roundResult.prediction) {
+            currentRoundPicks.push({
               username: player.username,
-              outcome: lastResult.outcome,
-              prediction: lastResult,
+              outcome: roundResult.outcome,
+              prediction: roundResult,
             });
           }
         });
 
+        const pendingRoundPicks = currentRoundPicks.filter(
+          (p) => p.outcome === "P",
+        );
+        const displayPicks =
+          pendingRoundPicks.length > 0 ? pendingRoundPicks : currentRoundPicks;
+
         // Check if all picks are settled (no pending)
         const allSettled =
-          latestPicks.length === playerCount &&
-          latestPicks.every((p) => p.outcome !== "P");
+          currentRoundPicks.length === playerCount &&
+          currentRoundPicks.every((p) => p.outcome !== "P");
 
-        // Check if all picks are pending
-        const allPending =
-          latestPicks.length === playerCount &&
-          latestPicks.every((p) => p.outcome === "P");
+        const hasCurrentRoundPicks = displayPicks.length > 0;
 
-        // Check if we have a complete round for all players
-        const hasCompleteRound =
-          playerCount > 0 && latestPicks.length === playerCount;
-
-        if (hasCompleteRound) {
+        if (hasCurrentRoundPicks) {
           // Check if within 24 hour window from latest kickoff
-          const kickoffTimes = latestPicks
+          const kickoffTimes = displayPicks
             .map((p) => p.prediction?.prediction?.match?.startDateTimeUtc)
             .filter(Boolean)
             .map((time) => new Date(time!));
@@ -138,9 +149,9 @@ export default function AllPicksBanner({
             const hoursSinceKickoff =
               (now.getTime() - latestKickoff.getTime()) / (1000 * 60 * 60);
 
-            // Show banner if all pending OR within 24 hours of latest kickoff
-            if (allPending || hoursSinceKickoff <= 24) {
-              setPicks(latestPicks);
+            // Show banner if any current-round picks are pending OR within 24 hours of latest kickoff
+            if (pendingRoundPicks.length > 0 || hoursSinceKickoff <= 24) {
+              setPicks(displayPicks);
               setIsSettled(allSettled);
               setShowBanner(true);
             } else {
@@ -204,7 +215,8 @@ export default function AllPicksBanner({
     picks.some((p) => p.outcome !== "P");
   const pendingCount = picks.filter((p) => p.outcome === "P").length;
   const settledCount = picks.filter((p) => p.outcome !== "P").length;
-  const allPending = picks.every((p) => p.outcome === "P");
+  const allPlayersPending =
+    picks.length === totalPlayers && picks.every((p) => p.outcome === "P");
 
   // Fixed turn order repeating each week
   const turnOrder = [
@@ -267,7 +279,7 @@ export default function AllPicksBanner({
         </div>
 
         {/* Bet Status Banner - only show when all picks are pending */}
-        {allPending && (
+        {allPlayersPending && (
           <div className="px-6 py-4 bg-slate-750 border-b border-slate-700">
             <div className="flex items-center justify-between gap-3">
               {/* Status pill */}
