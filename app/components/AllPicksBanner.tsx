@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 
 type Prediction = {
-  type: string;
+  type: string | null;
   match: {
     homeName: string;
     awayName: string;
     startDateTimeUtc: string;
     eventId: string;
-  };
+  } | null;
   finalScore?: {
     home: number | null;
     away: number | null;
@@ -18,14 +18,14 @@ type Prediction = {
 };
 
 type PlayerResult = {
-  outcome: "W" | "L" | "P";
+  outcome: "W" | "L" | "P" | "V";
   emoji?: string | null;
   prediction: Prediction | null;
 };
 
 type Pick = {
   username: string;
-  outcome: "W" | "L" | "P";
+  outcome: "W" | "L" | "P" | "V";
   prediction: PlayerResult | null;
 };
 

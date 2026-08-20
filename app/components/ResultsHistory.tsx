@@ -6,10 +6,10 @@ import OddsModal from "./OddsModal";
 type PlayerResults = {
   username: string;
   results: Array<{
-    outcome: "W" | "L" | "P";
+    outcome: "W" | "L" | "P" | "V";
     emoji: string | null;
     prediction?: {
-      type: string;
+      type: string | null;
       match: {
         homeName: string;
         awayName: string;
@@ -17,8 +17,9 @@ type PlayerResults = {
         awayLogo?: string;
         startDateTimeUtc: string;
         eventId: string;
-      };
+      } | null;
       odds?: number;
+      finalScore?: { home: number | null; away: number | null };
     };
   }>;
 };
@@ -616,7 +617,7 @@ export default function ResultsHistory({
                             const r = player.results[i];
                             if (
                               (r.outcome === "W" || r.outcome === "L") &&
-                              r.prediction
+                              r.prediction?.match
                             ) {
                               setResultDetail({
                                 username: player.username,
@@ -624,7 +625,7 @@ export default function ResultsHistory({
                                 resultIndex: i,
                                 type: r.prediction.type,
                                 match: r.prediction.match,
-                                finalScore: (r as any).prediction?.finalScore,
+                                finalScore: r.prediction.finalScore,
                               });
                             }
                           }}
@@ -633,13 +634,17 @@ export default function ResultsHistory({
                               ? "bg-green-600 text-white"
                               : player.results[i].outcome === "L"
                                 ? "bg-red-600 text-white"
-                                : "bg-blue-600 text-white"
-                          } ${player.results[i].prediction && (player.results[i].outcome === "W" || player.results[i].outcome === "L") ? "cursor-pointer ring-0 hover:ring-2 hover:ring-offset-2 hover:ring-offset-slate-800 hover:ring-white/40" : ""}`}
+                                : player.results[i].outcome === "V"
+                                  ? "bg-slate-600 text-slate-200"
+                                  : "bg-blue-600 text-white"
+                          } ${player.results[i].prediction?.match && (player.results[i].outcome === "W" || player.results[i].outcome === "L") ? "cursor-pointer ring-0 hover:ring-2 hover:ring-offset-2 hover:ring-offset-slate-800 hover:ring-white/40" : ""}`}
                           title={
                             player.results[i].outcome === "P" &&
-                            player.results[i].prediction
+                            player.results[i].prediction?.match
                               ? `${player.results[i].prediction?.type}: ${player.results[i].prediction?.match.homeName} vs ${player.results[i].prediction?.match.awayName}`
-                              : undefined
+                              : player.results[i].outcome === "V"
+                                ? "Void"
+                                : undefined
                           }
                         >
                           {player.results[i].outcome}
@@ -902,9 +907,9 @@ export default function ResultsHistory({
                           <span className="px-3 py-1 bg-purple-600 text-white text-xs font-bold rounded-full">
                             {item.prediction?.prediction?.type}
                           </span>
-                          {(item.prediction?.prediction as any)?.odds && (
+                          {item.prediction?.prediction?.odds && (
                             <span className="px-2 py-1 bg-emerald-600 text-white text-xs font-bold rounded-full">
-                              {(item.prediction?.prediction as any)?.odds}
+                              {item.prediction.prediction.odds}
                             </span>
                           )}
                         </div>
@@ -963,7 +968,7 @@ export default function ResultsHistory({
               </div>
               {(() => {
                 const allOdds = pendingPredictions
-                  .map((p) => (p.prediction?.prediction as any)?.odds)
+                  .map((p) => p.prediction?.prediction?.odds)
                   .filter((o): o is number => typeof o === "number" && o > 0);
                 if (allOdds.length === 0) return null;
                 const combined = allOdds.reduce((acc, o) => acc * o, 1);

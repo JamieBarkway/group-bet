@@ -3,16 +3,16 @@
 import { useEffect, useState } from "react";
 
 type ResultWithPrediction = {
-  outcome: "W" | "L" | "P";
+  outcome: "W" | "L" | "P" | "V";
   emoji: string | null;
   prediction?: {
-    type: string;
+    type: string | null;
     match: {
       homeName: string;
       awayName: string;
       startDateTimeUtc: string;
       eventId: string;
-    };
+    } | null;
     finalScore?: {
       home: number;
       away: number;
@@ -140,7 +140,9 @@ export default function OddsModal({
     }))
     .filter(
       ({ result }) =>
-        result && result.prediction && ["P", "W", "L"].includes(result.outcome),
+        result &&
+        result.prediction?.match &&
+        ["P", "W", "L"].includes(result.outcome),
     );
 
   return (

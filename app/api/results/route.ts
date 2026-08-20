@@ -84,7 +84,8 @@ async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
       cache: "no-store",
     });
     if (res.ok) return res;
-    if (i < retries - 1) await new Promise((r) => setTimeout(r, 1000 * (i + 1)));
+    if (i < retries - 1)
+      await new Promise((r) => setTimeout(r, 1000 * (i + 1)));
   }
   throw new Error(`Failed after ${retries} retries: ${url}`);
 }
@@ -201,7 +202,7 @@ function decideWin(
 }
 
 function recalcEmojis(
-  results: Array<{ outcome: "W" | "L" | "P"; emoji: string | null }>,
+  results: Array<{ outcome: "W" | "L" | "P" | "V"; emoji: string | null }>,
   specialEmojis?: Record<number, string>,
 ) {
   // Define special emojis that should be preserved (fine emojis + early payout)
@@ -212,7 +213,7 @@ function recalcEmojis(
   let runLen = 0;
   for (let i = 0; i < results.length; i++) {
     const r = results[i];
-    if (r.outcome === "P") {
+    if (r.outcome === "P" || r.outcome === "V") {
       r.emoji = null;
       runOutcome = null;
       runLen = 0;

@@ -42,16 +42,16 @@ export async function GET() {
 function getStats(user: {
   username: string;
   results: Array<{
-    outcome: "W" | "L" | "P";
+    outcome: "W" | "L" | "P" | "V";
     emoji: string | null;
     prediction?: {
-      type: string;
+      type: string | null;
       match: {
         homeName: string;
         awayName: string;
         startDateTimeUtc: string;
         eventId: string;
-      };
+      } | null;
       finalScore?: {
         home: number;
         away: number;
@@ -60,37 +60,40 @@ function getStats(user: {
     };
   }>;
 }): LeaderboardStats {
-  const total = user.results.filter((r) => r.outcome !== "P").length; // Exclude pending predictions
+  const settledResults = user.results.filter(
+    (r) => r.outcome === "W" || r.outcome === "L",
+  );
+  const total = settledResults.length;
   const wins = user.results.filter((r) => r.outcome === "W").length;
-  const losses = total - wins;
+  const losses = user.results.filter((r) => r.outcome === "L").length;
   const winPct = total ? ((wins / total) * 100).toFixed(1) : "0.0";
-  const totalWithResults = user.results.filter(
-    (r) => r.prediction != null,
+  const totalWithResults = settledResults.filter(
+    (r) => r.prediction?.type && r.prediction.match,
   ).length;
-  const bttsPct = total
+  const bttsPct = totalWithResults
     ? (
-        (user.results.filter((r) => r.prediction?.type === "BTTS").length /
+        (settledResults.filter((r) => r.prediction?.type === "BTTS").length /
           totalWithResults) *
         100
       ).toFixed(1)
     : "0.0";
-  const homeWinPct = total
+  const homeWinPct = totalWithResults
     ? (
-        (user.results.filter((r) => r.prediction?.type === "Home").length /
+        (settledResults.filter((r) => r.prediction?.type === "Home").length /
           totalWithResults) *
         100
       ).toFixed(1)
     : "0.0";
-  const awayWinPct = total
+  const awayWinPct = totalWithResults
     ? (
-        (user.results.filter((r) => r.prediction?.type === "Away").length /
+        (settledResults.filter((r) => r.prediction?.type === "Away").length /
           totalWithResults) *
         100
       ).toFixed(1)
     : "0.0";
-  const o2GoalsPct = total
+  const o2GoalsPct = totalWithResults
     ? (
-        (user.results.filter((r) => r.prediction?.type === "O2.5").length /
+        (settledResults.filter((r) => r.prediction?.type === "O2.5").length /
           totalWithResults) *
         100
       ).toFixed(1)
@@ -120,15 +123,17 @@ function getStats(user: {
       currentWinStreak++;
       currentLossStreak = 0;
       longestWinStreak = Math.max(longestWinStreak, currentWinStreak);
-    } else {
+    } else if (result.outcome === "L") {
       currentLossStreak++;
       currentWinStreak = 0;
       longestLossStreak = Math.max(longestLossStreak, currentLossStreak);
+    } else {
+      currentWinStreak = 0;
+      currentLossStreak = 0;
     }
   }
 
   // Get last 5 results (excluding pending)
-  const settledResults = user.results.filter((r) => r.outcome !== "P");
   const last5 = settledResults
     .slice(-5)
     .map((r) => r.outcome)
@@ -137,15 +142,20 @@ function getStats(user: {
 
   // Calculate current streak
   let currentStreak = 0;
-  const lastResult = settledResults.at(-1);
+  const lastResult = [...user.results]
+    .reverse()
+    .find((r) => r.outcome === "W" || r.outcome === "L");
 
   if (lastResult) {
     const targetOutcome = lastResult.outcome;
     console.log("Last result:", targetOutcome);
 
-    for (let i = settledResults.length - 1; i >= 0; i--) {
-      console.log("Next result", settledResults[i].outcome);
-      if (settledResults[i].outcome === targetOutcome) {
+    for (let i = user.results.length - 1; i >= 0; i--) {
+      console.log("Next result", user.results[i].outcome);
+      if (user.results[i].outcome === "P") {
+        continue;
+      }
+      if (user.results[i].outcome === targetOutcome) {
         currentStreak++;
         console.log("Current streak:", currentStreak);
       } else {

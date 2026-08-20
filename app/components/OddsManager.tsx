@@ -3,16 +3,16 @@
 import { useEffect, useState } from "react";
 
 type ResultWithPrediction = {
-  outcome: "W" | "L" | "P";
+  outcome: "W" | "L" | "P" | "V";
   emoji: string | null;
   prediction?: {
-    type: string;
+    type: string | null;
     match: {
       homeName: string;
       awayName: string;
       startDateTimeUtc: string;
       eventId: string;
-    };
+    } | null;
     finalScore?: {
       home: number;
       away: number;
@@ -136,6 +136,7 @@ export default function OddsManager() {
       .filter(
         ({ result }) =>
           result.prediction &&
+          result.prediction.match &&
           (result.outcome === "W" || result.outcome === "L"),
       ),
   );

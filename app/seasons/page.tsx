@@ -27,11 +27,11 @@ type LeaderboardEntry = {
 type PlayerResults = {
   username: string;
   results: Array<{
-    outcome: "W" | "L" | "P";
+    outcome: "W" | "L" | "P" | "V";
     emoji: string | null;
     prediction?: {
-      type: string;
-      match: { homeName: string; awayName: string };
+      type: string | null;
+      match: { homeName: string; awayName: string } | null;
       finalScore?: { home: number; away: number };
       odds?: number;
     };
@@ -211,12 +211,16 @@ export default function SeasonsPage() {
                                 className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold ${
                                   r.outcome === "W"
                                     ? "bg-green-600 text-white"
-                                    : "bg-red-600 text-white"
+                                    : r.outcome === "L"
+                                      ? "bg-red-600 text-white"
+                                      : "bg-slate-600 text-slate-200"
                                 }`}
                                 title={
-                                  r.prediction
+                                  r.prediction?.match
                                     ? `${r.prediction.type}: ${r.prediction.match.homeName} vs ${r.prediction.match.awayName}`
-                                    : undefined
+                                    : r.outcome === "V"
+                                      ? "Void"
+                                      : undefined
                                 }
                               >
                                 {r.outcome}
