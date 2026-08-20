@@ -305,6 +305,24 @@
     "username": "Zander",
     "results": [
       {
+        "outcome": "V",
+        "emoji": null,
+        "prediction": {
+          "type": null,
+          "match": null,
+          "odds": 0
+        }
+      },
+      {
+        "outcome": "V",
+        "emoji": null,
+        "prediction": {
+          "type": null,
+          "match": null,
+          "odds": 0
+        }
+      },
+      {
         "outcome": "P",
         "emoji": null,
         "prediction": {
