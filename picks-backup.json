@@ -41,6 +41,22 @@
             "away": 3
           }
         }
+      },
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "BTTS",
+          "match": {
+            "homeName": "Rotherham",
+            "awayName": "York City",
+            "homeLogo": "https://static.flashscore.com/res/image/data/WjUotCCN-6qsP6K6r.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/0dAfIQne-2wDusEwU.png",
+            "startDateTimeUtc": "2026-08-22T14:00:00.000Z",
+            "eventId": "dpvOkW2l"
+          },
+          "odds": 1.64
+        }
       }
     ]
   },
@@ -266,11 +282,44 @@
             "away": 2
           }
         }
+      },
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "Home",
+          "match": {
+            "homeName": "Stockport County",
+            "awayName": "Blackpool",
+            "homeLogo": "https://static.flashscore.com/res/image/data/2cPdIOlC-jV9EvOUh.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/xY13hkDN-SEFeTdWk.png",
+            "startDateTimeUtc": "2026-08-22T14:00:00.000Z",
+            "eventId": "nRKw5jI5"
+          },
+          "odds": 1.61
+        }
       }
     ]
   },
   {
     "username": "Zander",
-    "results": []
+    "results": [
+      {
+        "outcome": "P",
+        "emoji": null,
+        "prediction": {
+          "type": "Away",
+          "match": {
+            "homeName": "Preston",
+            "awayName": "Wolves",
+            "homeLogo": "https://static.flashscore.com/res/image/data/pzTKMome-KSOT8pKJ.png",
+            "awayLogo": "https://static.flashscore.com/res/image/data/MV7MiUmC-ABWS7fBq.png",
+            "startDateTimeUtc": "2026-08-22T14:00:00.000Z",
+            "eventId": "QJI2IJFt"
+          },
+          "odds": 1.83
+        }
+      }
+    ]
   }
 ]
