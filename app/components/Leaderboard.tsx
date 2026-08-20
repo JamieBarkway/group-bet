@@ -420,7 +420,6 @@ export default function Leaderboard({
                     <span
                       className={`inline-flex items-center gap-1 ${getAvgOddsColor(u.avgOdds)} text-white px-1.5 md:px-2.5 py-1 rounded text-xs font-semibold`}
                     >
-                      <span>💰</span>
                       <span>{u.avgOdds}</span>
                     </span>
                   </td>
@@ -428,7 +427,6 @@ export default function Leaderboard({
                     <span
                       className={`inline-flex items-center gap-1 ${getAvgWinningOddsColor(u.avgWinningOdds)} text-white px-1.5 md:px-2.5 py-1 rounded text-xs font-semibold`}
                     >
-                      <span>🏆</span>
                       <span>{u.avgWinningOdds}</span>
                     </span>
                   </td>
