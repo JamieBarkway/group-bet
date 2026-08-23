@@ -135,6 +135,26 @@ export async function POST(req: Request) {
       // Build comprehensive list of all picks
       let allPicksMessage = `🔥 <b>ALL PICKS ARE IN!</b> 🔥\n\n`;
 
+      const pendingRoundOdds = users
+        .map(
+          (u: any) =>
+            u.results.find((r: any) => r.outcome === "P")?.prediction?.odds,
+        )
+        .filter(
+          (odd: any): odd is number => typeof odd === "number" && odd > 0,
+        );
+
+      if (
+        pendingRoundOdds.length === users.length &&
+        pendingRoundOdds.length > 0
+      ) {
+        const totalCombinedOdds = pendingRoundOdds.reduce(
+          (acc: number, odd: number) => acc * odd,
+          1,
+        );
+        allPicksMessage += `🎲 <b>Total Combined Odds:</b> ${totalCombinedOdds.toFixed(2)}\n\n`;
+      }
+
       users.forEach((u: any) => {
         const pendingPick = u.results.find((r: any) => r.outcome === "P");
         if (pendingPick?.prediction) {

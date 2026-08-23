@@ -45,6 +45,7 @@ export default function AllPicksBanner({
   const [showBanner, setShowBanner] = useState(false);
   const [currentRound, setCurrentRound] = useState(0);
   const [isSettled, setIsSettled] = useState(false);
+  const [combinedOdds, setCombinedOdds] = useState<number | null>(null);
   const [betStatus, setBetStatus] = useState<{
     week: number;
     placedBy: string;
@@ -121,6 +122,16 @@ export default function AllPicksBanner({
           }
         });
 
+        const currentRoundOdds = currentRoundPicks
+          .map((p) => p.prediction?.prediction?.odds)
+          .filter((odd): odd is number => typeof odd === "number" && odd > 0);
+        setCombinedOdds(
+          currentRoundOdds.length === currentRoundPicks.length &&
+            currentRoundOdds.length > 0
+            ? currentRoundOdds.reduce((acc, odd) => acc * odd, 1)
+            : null,
+        );
+
         const pendingRoundPicks = currentRoundPicks.filter(
           (p) => p.outcome === "P",
         );
@@ -155,12 +166,15 @@ export default function AllPicksBanner({
               setIsSettled(allSettled);
               setShowBanner(true);
             } else {
+              setCombinedOdds(null);
               setShowBanner(false);
             }
           } else {
+            setCombinedOdds(null);
             setShowBanner(false);
           }
         } else {
+          setCombinedOdds(null);
           setShowBanner(false);
         }
       } catch (err) {
@@ -217,6 +231,15 @@ export default function AllPicksBanner({
   const settledCount = picks.filter((p) => p.outcome !== "P").length;
   const allPlayersPending =
     picks.length === totalPlayers && picks.every((p) => p.outcome === "P");
+  const statusText = isSettled
+    ? ""
+    : hasMixedResults
+      ? `${settledCount} settled • ${pendingCount} pending`
+      : "";
+  const combinedOddsText =
+    combinedOdds !== null
+      ? `Total Combined Odds: ${combinedOdds.toFixed(2)}`
+      : "";
 
   // Fixed turn order repeating each week
   const turnOrder = [
@@ -270,11 +293,7 @@ export default function AllPicksBanner({
             </div>
           </div>
           <p className="text-purple-100 text-sm mt-1">
-            {isSettled
-              ? ""
-              : hasMixedResults
-                ? `${settledCount} settled • ${pendingCount} pending`
-                : ""}
+            {[statusText, combinedOddsText].filter(Boolean).join(" • ")}
           </p>
         </div>
 

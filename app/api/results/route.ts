@@ -421,6 +421,24 @@ export async function POST() {
       if (allSettled) {
         // Build summary message with emoji explanations
         let summary = `📊 <b>Round ${roundIndex + 1} Results</b>\n\n`;
+
+        const settledRoundOdds = users
+          .map((u: any) => u.results[roundIndex]?.prediction?.odds)
+          .filter(
+            (odd: any): odd is number => typeof odd === "number" && odd > 0,
+          );
+
+        if (
+          settledRoundOdds.length === users.length &&
+          settledRoundOdds.length > 0
+        ) {
+          const totalCombinedOdds = settledRoundOdds.reduce(
+            (acc: number, odd: number) => acc * odd,
+            1,
+          );
+          summary += `🎲 <b>Total Combined Odds:</b> ${totalCombinedOdds.toFixed(2)}\n\n`;
+        }
+
         users.forEach((u) => {
           const r = u.results[roundIndex];
           if (!r || !r.prediction) return;
