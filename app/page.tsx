@@ -8,6 +8,8 @@ import Leaderboard from "./components/Leaderboard";
 import ResultsHistory from "./components/ResultsHistory";
 import WeekendFixtures from "./components/Fixtures";
 import AllPicksBanner from "./components/AllPicksBanner";
+import WorstPickVote from "./components/WorstPickVote";
+import WorstPickStats from "./components/WorstPickStats";
 
 export default function Page() {
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
@@ -41,7 +43,9 @@ export default function Page() {
       <main className="bg-gradient-to-br from-slate-900 to-slate-800 p-8">
         <div className="max-w-6xl mx-auto">
           <AllPicksBanner selectedPlayer={selectedPlayer} />
+          <WorstPickVote selectedPlayer={selectedPlayer} />
           <Leaderboard selectedPlayer={selectedPlayer} />
+          <WorstPickStats selectedPlayer={selectedPlayer} />
           <ResultsHistory selectedPlayer={selectedPlayer} />
           <WeekendFixtures selectedPlayer={selectedPlayer} />
         </div>

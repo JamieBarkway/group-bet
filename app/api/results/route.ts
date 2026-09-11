@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import {
+  resolveWorstPickWeek,
+  WorstPickResolution,
+  WORST_PICK_EMOJI,
+  WORST_PICK_FINE,
+} from "@/app/lib/worstPick";
 
 // Telegram notification helper (copied from predictions/route.ts)
 async function sendTelegramNotification(message: string) {
@@ -288,6 +294,7 @@ export async function POST() {
 
     // Initialize variables for settlement and emoji tracking
     let settled = 0;
+    let worstPick: WorstPickResolution | null = null;
     const specialEmojis: Record<number, Record<number, string>> = {}; // [userIndex][resultIndex] -> emoji
 
     // Only attempt to settle if there are pending predictions
@@ -396,6 +403,16 @@ export async function POST() {
             specialEmojis[loserUserIndex][roundIndex] = "🤢";
           }
         }
+
+        // Reveal the secret "worst pick of the week" vote now the round is done
+        worstPick = resolveWorstPickWeek(users, roundIndex + 1);
+        for (const name of worstPick?.fined ?? []) {
+          const ui = users.findIndex((u) => u.username === name);
+          if (ui === -1) continue;
+          if (!specialEmojis[ui]) specialEmojis[ui] = {};
+          specialEmojis[ui][roundIndex] =
+            (specialEmojis[ui][roundIndex] || "") + WORST_PICK_EMOJI;
+        }
       }
     }
 
@@ -503,6 +520,12 @@ export async function POST() {
                 `${u.username} picked BTTS/O2.5 and got a 0-0! 😴`,
               );
             }
+            if (emoji.includes(WORST_PICK_EMOJI)) {
+              specialFine += WORST_PICK_FINE;
+              specialEmojisList.push(
+                `${u.username} was voted worst pick and lost! ${WORST_PICK_EMOJI}`,
+              );
+            }
 
             // Fire streaks (🔥)
             if (emoji.includes("🔥") && r.outcome === "W") {
@@ -530,6 +553,31 @@ export async function POST() {
           }
           summary += "\n\n";
         });
+
+        if (worstPick && worstPick.worstPicks.length > 0) {
+          summary += `🗳️ <b>WORST PICK OF THE WEEK — REVEALED</b>\n\n`;
+          const tally = Object.entries(worstPick.counts).sort(
+            (a, b) => b[1] - a[1],
+          );
+          summary += tally
+            .map(([name, count]) => `${name}: ${count} vote(s)`)
+            .join("\n");
+          summary += `\n\n💩 <b>${worstPick.worstPicks.join(" & ")}</b> got the worst pick vote.\n`;
+          if (worstPick.fined.length > 0) {
+            summary += `❌ It lost — <b>£${WORST_PICK_FINE} fine for ${worstPick.fined.join(" & ")}</b> ${WORST_PICK_EMOJI}\n`;
+          } else {
+            summary += `✅ It won — no fine. Doubters humbled.\n`;
+          }
+          summary += `\n<b>Who voted for who:</b>\n`;
+          summary += worstPick.votes
+            .map(
+              (v) =>
+                `${v.voter} → ${v.votedFor}${v.auto ? " (auto: never voted)" : ""}`,
+            )
+            .join("\n");
+          summary += "\n\n";
+        }
+
         await sendTelegramNotification(summary);
       }
     }
