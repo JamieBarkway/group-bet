@@ -53,7 +53,8 @@ export async function GET(req: Request) {
       // Only disclosed once the round has been settled and announced.
       result: revealed
         ? {
-            worstPicks: entry!.worstPicks,
+            worstPick: entry!.worstPick,
+            tiedWith: entry!.tiedWith,
             fined: entry!.fined,
             counts,
             votes: entry!.votes,

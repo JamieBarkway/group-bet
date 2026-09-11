@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 
 type WorstPickResult = {
-  worstPicks: string[];
-  fined: string[];
+  worstPick: string | null;
+  tiedWith: string[];
+  fined: boolean;
   counts: Record<string, number>;
   votes: Array<{ voter: string; votedFor: string; auto: boolean }>;
 };
@@ -116,13 +117,20 @@ export default function WorstPickVote({
         {state.revealed && state.result ? (
           <div className="bg-slate-900 rounded-lg border border-slate-700 p-4">
             <p className="text-white font-bold mb-2">
-              💩 Voted worst pick:{" "}
-              {state.result.worstPicks.join(" & ") || "No votes cast"}
+              💩 Voted worst pick: {state.result.worstPick ?? "No votes cast"}
             </p>
-            {state.result.fined.length > 0 ? (
+            {state.result.tiedWith.length > 1 && (
+              <p className="text-slate-400 text-xs mb-2">
+                Tied on votes with{" "}
+                {state.result.tiedWith
+                  .filter((n) => n !== state.result!.worstPick)
+                  .join(" & ")}{" "}
+                — split on worst current form.
+              </p>
+            )}
+            {state.result.fined ? (
               <p className="text-red-400 text-sm mb-3">
-                It lost — £{state.fine} fine for{" "}
-                {state.result.fined.join(" & ")} 🤦‍♂️
+                It lost — £{state.fine} fine for {state.result.worstPick} 🤦‍♂️
               </p>
             ) : (
               <p className="text-green-400 text-sm mb-3">

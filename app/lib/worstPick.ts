@@ -21,8 +21,9 @@ export type WorstPickWeek = {
   votes: WorstPickVote[];
   locked: boolean;
   revealed: boolean;
-  worstPicks: string[];
-  fined: string[];
+  worstPick: string | null;
+  tiedWith: string[];
+  fined: boolean;
 };
 
 type PickUser = {
@@ -83,8 +84,9 @@ export function ensureWeek(
       votes: [],
       locked: false,
       revealed: false,
-      worstPicks: [],
-      fined: [],
+      worstPick: null,
+      tiedWith: [],
+      fined: false,
     };
     weeks.push(entry);
   }
@@ -122,26 +124,69 @@ export function applyLock(
 
 export function tallyVotes(votes: WorstPickVote[]): {
   counts: Record<string, number>;
-  worstPicks: string[];
+  tied: string[];
 } {
   const counts: Record<string, number> = {};
   for (const v of votes) {
     counts[v.votedFor] = (counts[v.votedFor] || 0) + 1;
   }
   const max = Math.max(0, ...Object.values(counts));
-  const worstPicks =
+  const tied =
     max > 0
       ? Object.keys(counts)
           .filter((name) => counts[name] === max)
           .sort()
       : [];
-  return { counts, worstPicks };
+  return { counts, tied };
+}
+
+/** Form going into `week`: wins in the last 5 settled rounds, and the current losing run. */
+function getFormBefore(
+  user: PickUser,
+  week: number,
+): { winsInLast5: number; losingStreak: number } {
+  const settled = user.results
+    .slice(0, Math.max(0, week - 1))
+    .filter((r) => r.outcome === "W" || r.outcome === "L");
+  const last5 = settled.slice(-5);
+  let losingStreak = 0;
+  for (let i = settled.length - 1; i >= 0 && settled[i].outcome === "L"; i--) {
+    losingStreak++;
+  }
+  return {
+    winsInLast5: last5.filter((r) => r.outcome === "W").length,
+    losingStreak,
+  };
+}
+
+/** Tie-break: the player in the worst form going into the round takes the hit. */
+export function breakTieByForm(
+  users: PickUser[],
+  week: number,
+  tied: string[],
+): string | null {
+  if (tied.length === 0) return null;
+  if (tied.length === 1) return tied[0];
+
+  return [...tied].sort((a, b) => {
+    const ua = users.find((u) => u.username === a);
+    const ub = users.find((u) => u.username === b);
+    if (!ua || !ub) return a.localeCompare(b);
+    const fa = getFormBefore(ua, week);
+    const fb = getFormBefore(ub, week);
+    if (fa.winsInLast5 !== fb.winsInLast5)
+      return fa.winsInLast5 - fb.winsInLast5;
+    if (fa.losingStreak !== fb.losingStreak)
+      return fb.losingStreak - fa.losingStreak;
+    return a.localeCompare(b);
+  })[0];
 }
 
 export type WorstPickResolution = {
   week: number;
-  worstPicks: string[];
-  fined: string[];
+  worstPick: string | null;
+  tiedWith: string[];
+  fined: boolean;
   counts: Record<string, number>;
   votes: WorstPickVote[];
 };
@@ -160,7 +205,8 @@ export function resolveWorstPickWeek(
   if (entry.revealed) {
     return {
       week,
-      worstPicks: entry.worstPicks,
+      worstPick: entry.worstPick,
+      tiedWith: entry.tiedWith,
       fined: entry.fined,
       counts: tallyVotes(entry.votes).counts,
       votes: entry.votes,
@@ -168,19 +214,27 @@ export function resolveWorstPickWeek(
   }
 
   applyLock(users, entry, true);
-  const { counts, worstPicks } = tallyVotes(entry.votes);
-  const fined = worstPicks.filter(
-    (name) =>
-      users.find((u) => u.username === name)?.results[week - 1]?.outcome ===
-      "L",
-  );
+  const { counts, tied } = tallyVotes(entry.votes);
+  const worstPick = breakTieByForm(users, week, tied);
+  const fined =
+    worstPick !== null &&
+    users.find((u) => u.username === worstPick)?.results[week - 1]?.outcome ===
+      "L";
 
-  entry.worstPicks = worstPicks;
+  entry.worstPick = worstPick;
+  entry.tiedWith = tied.length > 1 ? tied : [];
   entry.fined = fined;
   entry.revealed = true;
   writeWeeks(weeks);
 
-  return { week, worstPicks, fined, counts, votes: entry.votes };
+  return {
+    week,
+    worstPick,
+    tiedWith: entry.tiedWith,
+    fined,
+    counts,
+    votes: entry.votes,
+  };
 }
 
 export type WorstPickPlayerStats = {
@@ -201,9 +255,7 @@ export function getWorstPickStats(
   const revealed = weeks.filter((w) => w.revealed);
 
   return users.map((u) => {
-    const weeksAsWorst = revealed.filter((w) =>
-      w.worstPicks.includes(u.username),
-    );
+    const weeksAsWorst = revealed.filter((w) => w.worstPick === u.username);
     const outcomes = weeksAsWorst.map(
       (w) => u.results[w.week - 1]?.outcome ?? null,
     );

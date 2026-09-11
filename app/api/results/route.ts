@@ -406,12 +406,15 @@ export async function POST() {
 
         // Reveal the secret "worst pick of the week" vote now the round is done
         worstPick = resolveWorstPickWeek(users, roundIndex + 1);
-        for (const name of worstPick?.fined ?? []) {
-          const ui = users.findIndex((u) => u.username === name);
-          if (ui === -1) continue;
-          if (!specialEmojis[ui]) specialEmojis[ui] = {};
-          specialEmojis[ui][roundIndex] =
-            (specialEmojis[ui][roundIndex] || "") + WORST_PICK_EMOJI;
+        if (worstPick?.fined && worstPick.worstPick) {
+          const ui = users.findIndex(
+            (u) => u.username === worstPick!.worstPick,
+          );
+          if (ui !== -1) {
+            if (!specialEmojis[ui]) specialEmojis[ui] = {};
+            specialEmojis[ui][roundIndex] =
+              (specialEmojis[ui][roundIndex] || "") + WORST_PICK_EMOJI;
+          }
         }
       }
     }
@@ -554,7 +557,7 @@ export async function POST() {
           summary += "\n\n";
         });
 
-        if (worstPick && worstPick.worstPicks.length > 0) {
+        if (worstPick && worstPick.worstPick) {
           summary += `🗳️ <b>WORST PICK OF THE WEEK — REVEALED</b>\n\n`;
           const tally = Object.entries(worstPick.counts).sort(
             (a, b) => b[1] - a[1],
@@ -562,9 +565,14 @@ export async function POST() {
           summary += tally
             .map(([name, count]) => `${name}: ${count} vote(s)`)
             .join("\n");
-          summary += `\n\n💩 <b>${worstPick.worstPicks.join(" & ")}</b> got the worst pick vote.\n`;
-          if (worstPick.fined.length > 0) {
-            summary += `❌ It lost — <b>£${WORST_PICK_FINE} fine for ${worstPick.fined.join(" & ")}</b> ${WORST_PICK_EMOJI}\n`;
+          summary += `\n\n💩 <b>${worstPick.worstPick}</b> got the worst pick vote.\n`;
+          if (worstPick.tiedWith.length > 1) {
+            summary += `⚖️ Tied on votes with ${worstPick.tiedWith
+              .filter((n) => n !== worstPick!.worstPick)
+              .join(" & ")} — split on worst current form.\n`;
+          }
+          if (worstPick.fined) {
+            summary += `❌ It lost — <b>£${WORST_PICK_FINE} fine for ${worstPick.worstPick}</b> ${WORST_PICK_EMOJI}\n`;
           } else {
             summary += `✅ It won — no fine. Doubters humbled.\n`;
           }
