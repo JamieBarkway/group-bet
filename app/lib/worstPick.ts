@@ -56,6 +56,20 @@ export function writeWeeks(weeks: WorstPickWeek[]) {
   fs.writeFileSync(VOTES_PATH, JSON.stringify(weeks, null, 2));
 }
 
+export function getPreviousVote(
+  weeks: WorstPickWeek[],
+  currentWeek: number,
+  username: string,
+): WorstPickVote | null {
+  return (
+    [...weeks]
+      .filter((week) => week.week < currentWeek)
+      .sort((a, b) => b.week - a.week)
+      .find((week) => week.votes.some((vote) => vote.voter === username))
+      ?.votes.find((vote) => vote.voter === username) ?? null
+  );
+}
+
 export function getCurrentWeek(users: PickUser[]): number {
   if (users.length === 0) return 0;
   return Math.max(...users.map((u) => u.results.length));

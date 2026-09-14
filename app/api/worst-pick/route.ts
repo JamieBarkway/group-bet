@@ -4,6 +4,7 @@ import {
   ensureWeek,
   getCurrentWeek,
   getLockTime,
+  getPreviousVote,
   getWorstPickStats,
   readUsers,
   readWeeks,
@@ -32,6 +33,8 @@ export async function GET(req: Request) {
     const lockTime = week > 0 ? getLockTime(users, week) : null;
     const revealed = entry?.revealed ?? false;
     const { counts } = tallyVotes(entry?.votes ?? []);
+    const previousVote =
+      username && week > 0 ? getPreviousVote(weeks, week, username) : null;
 
     return NextResponse.json({
       week,
@@ -50,6 +53,7 @@ export async function GET(req: Request) {
         username && entry
           ? (entry.votes.find((v) => v.voter === username)?.auto ?? false)
           : false,
+      previousVotedFor: previousVote?.votedFor ?? null,
       // Only disclosed once the round has been settled and announced.
       result: revealed
         ? {
@@ -108,6 +112,14 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "Voting is locked for this round" },
         { status: 403 },
+      );
+    }
+
+    const previousVote = getPreviousVote(weeks, week, username);
+    if (previousVote?.votedFor === votedFor) {
+      return NextResponse.json(
+        { error: `You picked ${votedFor} last time. Pick someone else.` },
+        { status: 400 },
       );
     }
 
