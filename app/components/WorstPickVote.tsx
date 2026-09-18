@@ -155,18 +155,18 @@ export default function WorstPickVote({
             <div className="flex flex-wrap gap-2">
               {state.players.map((name) => {
                 const isChoice = choice === name;
-                const wasPreviousChoice = state.previousVotedFor === name;
+                //const wasPreviousChoice = state.previousVotedFor === name;
                 return (
                   <button
                     key={name}
                     type="button"
-                    disabled={state.locked || saving || wasPreviousChoice}
+                    disabled={state.locked || saving}
                     onClick={() => submitVote(name)}
-                    title={
-                      wasPreviousChoice
-                        ? `You picked ${name} last time`
-                        : undefined
-                    }
+                    // title={
+                    //   //wasPreviousChoice
+                    //   //  ? `You picked ${name} last time`
+                    //   //  : undefined
+                    // }
                     className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors border ${
                       isChoice
                         ? "bg-red-600 border-red-400 text-white"
@@ -175,7 +175,7 @@ export default function WorstPickVote({
                   >
                     {name}
                     {name === selectedPlayer && " (you)"}
-                    {wasPreviousChoice && " — last pick"}
+                    {/* {wasPreviousChoice && " — last pick"} */}
                   </button>
                 );
               })}
