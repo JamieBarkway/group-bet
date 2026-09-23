@@ -43,4 +43,3 @@ next-env.d.ts
 # data files (user-generated, should not be synced via git)
 app/data/picks.json
 app/data/betStatus.json
-app/data/worstPickVotes.json
