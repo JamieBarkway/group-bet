@@ -66,6 +66,11 @@ const LEAGUES = [
       "https://api.sportdb.dev/api/flashscore/football/england:198/league-two:0MwU4NW6/2026-2027/results?page=1",
   },
   {
+    name: "National League",
+    endpoint:
+      "https://api.sportdb.dev/api/flashscore/football/england:198/national-league:4CWHXGM1/2026-2027/results?page=1",
+  },
+  {
     name: "FA Cup",
     endpoint:
       "https://api.sportdb.dev/api/flashscore/football/england:198/fa-cup:lYQtaqPQ/2026-2027/results?page=1",
