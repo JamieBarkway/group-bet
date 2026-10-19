@@ -615,15 +615,15 @@ export async function POST() {
 }
 
 // PATCH: Override a loss to a win (e.g. team was 2 goals up — early payout rule)
-// Only accessible by "The Real Barky"
+// Only accessible by "Jamie Barky"
 export async function PATCH(request: Request) {
   try {
     const body = await request.json();
     const { username, resultIndex, requestedBy } = body;
 
-    if (requestedBy !== "The Real Barky") {
+    if (requestedBy !== "Jamie Barky") {
       return NextResponse.json(
-        { error: "Only The Real Barky can override results" },
+        { error: "Only Jamie Barky can override results" },
         { status: 403 },
       );
     }

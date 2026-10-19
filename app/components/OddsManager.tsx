@@ -167,7 +167,7 @@ export default function OddsManager() {
       <h2 className="text-4xl font-bold text-white mb-6 flex items-center gap-2">
         <span className="text-blue-400">📊</span> Odds Manager
         <span className="text-sm font-normal text-slate-400 ml-2">
-          (The Real Barky Only)
+          (Jamie Barky Only)
         </span>
       </h2>
 

@@ -245,7 +245,7 @@ export default function AllPicksBanner({
   const turnOrder = [
     "Brett",
     "Andy Barky",
-    "The Real Barky",
+    "Jamie Barky",
     "Hudo",
     "Gaz",
     "Clarky",

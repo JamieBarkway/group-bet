@@ -217,7 +217,7 @@ export async function POST(req: Request) {
       const turnOrder = [
         "Brett",
         "Andy Barky",
-        "The Real Barky",
+        "Jamie Barky",
         "Hudo",
         "Gaz",
         "Clarky",

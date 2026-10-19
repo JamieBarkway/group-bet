@@ -15,20 +15,20 @@
         "timestamp": "2026-09-11T11:33:34.134Z"
       },
       {
-        "voter": "The Real Barky",
+        "voter": "Jamie Barky",
         "votedFor": "Clarky",
         "auto": false,
         "timestamp": "2026-09-11T11:33:39.294Z"
       },
       {
         "voter": "Zander",
-        "votedFor": "The Real Barky",
+        "votedFor": "Jamie Barky",
         "auto": false,
         "timestamp": "2026-09-11T16:46:28.100Z"
       },
       {
         "voter": "Hudo",
-        "votedFor": "The Real Barky",
+        "votedFor": "Jamie Barky",
         "auto": false,
         "timestamp": "2026-09-11T17:20:31.093Z"
       },
@@ -40,7 +40,7 @@
       },
       {
         "voter": "Brett",
-        "votedFor": "The Real Barky",
+        "votedFor": "Jamie Barky",
         "auto": false,
         "timestamp": "2026-09-11T20:01:27.814Z"
       }
@@ -49,7 +49,7 @@
     "revealed": true,
     "worstPicks": [],
     "fined": true,
-    "worstPick": "The Real Barky",
+    "worstPick": "Jamie Barky",
     "tiedWith": []
   },
   {
@@ -68,7 +68,7 @@
         "timestamp": "2026-09-17T06:24:04.612Z"
       },
       {
-        "voter": "The Real Barky",
+        "voter": "Jamie Barky",
         "votedFor": "Hudo",
         "auto": false,
         "timestamp": "2026-09-18T06:08:32.247Z"
@@ -132,7 +132,7 @@
         "timestamp": "2026-09-25T19:13:43.129Z"
       },
       {
-        "voter": "The Real Barky",
+        "voter": "Jamie Barky",
         "votedFor": "Zander",
         "auto": false,
         "timestamp": "2026-09-25T19:42:41.482Z"
@@ -196,8 +196,8 @@
         "timestamp": "2026-10-10T14:07:34.475Z"
       },
       {
-        "voter": "The Real Barky",
-        "votedFor": "The Real Barky",
+        "voter": "Jamie Barky",
+        "votedFor": "Jamie Barky",
         "auto": true,
         "timestamp": "2026-10-10T14:07:34.475Z"
       }
@@ -205,11 +205,7 @@
     "locked": true,
     "revealed": true,
     "worstPick": "Brett",
-    "tiedWith": [
-      "Andy Barky",
-      "Brett",
-      "Gaz"
-    ],
+    "tiedWith": ["Andy Barky", "Brett", "Gaz"],
     "fined": true
   },
   {
@@ -217,7 +213,7 @@
     "votes": [
       {
         "voter": "Andy Barky",
-        "votedFor": "The Real Barky",
+        "votedFor": "Jamie Barky",
         "auto": false,
         "timestamp": "2026-10-16T18:29:02.112Z"
       },
@@ -246,7 +242,7 @@
         "timestamp": "2026-10-17T08:40:20.294Z"
       },
       {
-        "voter": "The Real Barky",
+        "voter": "Jamie Barky",
         "votedFor": "Clarky",
         "auto": false,
         "timestamp": "2026-10-17T09:12:42.231Z"

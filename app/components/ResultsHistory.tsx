@@ -374,7 +374,7 @@ export default function ResultsHistory({
   const turnOrder = [
     "Brett",
     "Andy Barky",
-    "The Real Barky",
+    "Jamie Barky",
     "Hudo",
     "Gaz",
     "Clarky",
@@ -540,7 +540,7 @@ export default function ResultsHistory({
                 >
                   <div className="flex flex-col items-center gap-1">
                     <span>{i + 1}</span>
-                    {selectedPlayer === "The Real Barky" &&
+                    {selectedPlayer === "Jamie Barky" &&
                       (() => {
                         // Only show odds button if all users have a prediction for this round (P, W, or L)
                         const allHavePick = players.every(
@@ -1065,7 +1065,7 @@ export default function ResultsHistory({
                   </span>
                 </div>
               )}
-              {selectedPlayer === "The Real Barky" &&
+              {selectedPlayer === "Jamie Barky" &&
                 resultDetail.outcome === "L" && (
                   <button
                     onClick={handleOverrideResult}

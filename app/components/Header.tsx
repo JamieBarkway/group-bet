@@ -81,7 +81,7 @@ export default function Header({ selectedPlayer, onLogout }: HeaderProps) {
           >
             📜 Past Seasons
           </Link>
-          {selectedPlayer === "The Real Barky" && (
+          {selectedPlayer === "Jamie Barky" && (
             <button
               onClick={handleManualSettle}
               disabled={manualSettling}
