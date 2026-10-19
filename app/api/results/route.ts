@@ -85,6 +85,11 @@ const LEAGUES = [
     endpoint:
       "https://api.sportdb.dev/api/flashscore/football/scotland:199/premiership:tGwiyvJ1/2026-2027/results?page=1",
   },
+  {
+    name: "Champions League",
+    endpoint:
+      "https://api.sportdb.dev/api/flashscore/football/europe:6/champions-league:xGrwqq16/2026-2027/results?page=1",
+  },
 ];
 const DATA_PATH = path.join(process.cwd(), "app/data", "picks.json");
 
