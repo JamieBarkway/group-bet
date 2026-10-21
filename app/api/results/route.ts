@@ -309,12 +309,12 @@ export async function POST() {
 
     // Only attempt to settle if there are pending predictions
     if (pending.length > 0) {
-      const latestKickoff = new Date(
-        Math.max(...pending.map((p) => p.start.getTime())),
+      const earliestKickoff = new Date(
+        Math.min(...pending.map((p) => p.start.getTime())),
       );
       const now = new Date();
       const twoHoursMs = 2 * 60 * 60 * 1000;
-      if (now.getTime() - latestKickoff.getTime() < twoHoursMs) {
+      if (now.getTime() - earliestKickoff.getTime() < twoHoursMs) {
         return NextResponse.json({
           settled: 0,
           message: "Too early to settle; latest game not 2h old",
